@@ -32,6 +32,9 @@ docker buildx build                         \
     --load                                  \
     -t $IMAGE_NAME .
 
+# Clean up any existing containers
+clean_container
+
 # Run the container in detached mode and remove it on exit
 docker run                  \
     -d                      \
