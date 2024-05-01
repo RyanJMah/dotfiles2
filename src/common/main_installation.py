@@ -5,6 +5,9 @@ THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 SRC_DIR  = os.path.dirname(THIS_DIR)
 sys.path.append(SRC_DIR)
 
+from linux.platform_install import Linux
+from macos.platform_install import MacOS
+
 def prompt_user(msg: str) -> bool:
     while True:
         user_input = input(f"{msg} [Y/n]: ").strip().lower()
@@ -15,14 +18,14 @@ def prompt_user(msg: str) -> bool:
 
 def install_all(os_type):
     if os_type == "linux":
-        import linux.platform_install as platform
+        platform = Linux()
     
     elif os_type == "macos":
-        import macos.platform_install as platform
+        platform = MacOS()
 
 
     if prompt_user("Install Neovim?"):
-        platform.install_neovim()
+        platform.install_nvim()
 
 
     platform.platform_specific_install()
