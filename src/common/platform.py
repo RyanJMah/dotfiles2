@@ -41,15 +41,9 @@ class Platform(ABC):
     def install_vscode_conf(self):
         pass
 
+    @abstractmethod
     def install_vscode_extensions(self):
-        extensions_dir = os.path.join(DOTFILES_COMMON_DIR, "vscode_extensions")
-
-        for f in os.listdir(extensions_dir):
-            if f.endswith(".vsix"):
-                cmd = f"code --install-extension {os.path.join(extensions_dir, f)}"
-
-                self.exec_bash(cmd)
-
+        pass
 
     @abstractmethod
     def platform_specific_install(self):

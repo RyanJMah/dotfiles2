@@ -7,6 +7,7 @@ SRC_DIR  = os.path.dirname(THIS_DIR)
 sys.path.append(SRC_DIR)
 
 from common.platform import Platform
+from common.paths import HOME
 
 class Linux(Platform):
     def install_nvim(self):
@@ -16,8 +17,8 @@ class Linux(Platform):
 
         rm nvim-linux64.tar.gz
 
-        mkdir -p ~/.local
-        mv nvim-linux64 ~/.local
+        mkdir -p {HOME}/.local
+        mv nvim-linux64 {HOME}/.local/nvim
         """
 
         self.exec_bash(cmd)
