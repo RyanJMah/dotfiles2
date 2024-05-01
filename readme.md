@@ -25,7 +25,8 @@ provide a "fresh" install of the target OS to run the scripts on.
 A computer legally running MacOS is required. Apple's own virutalization
 framework in swift is used to spin-up a VM running a fresh install of MacOS.
 
-* Note: to clone this repo in the VM, you will need to `xcode-select --install` first
+**NOTE:**
+* To clone this repo in the VM, you will need to `xcode-select --install` first
 
 ```bash
 cd test_environments/macos
