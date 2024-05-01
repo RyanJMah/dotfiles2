@@ -1,8 +1,7 @@
 import os
 import sys
 
-THIS_DIR = os.path.dirname(os.path.abspath(__file__))
-SRC_DIR  = os.path.dirname(THIS_DIR)
+from paths import SRC_DIR
 sys.path.append(SRC_DIR)
 
 from linux.platform_install import Linux
@@ -26,6 +25,9 @@ def install_all(os_type):
 
     if prompt_user("Install Neovim?"):
         platform.install_nvim()
+
+    if prompt_user("Install Neovim configuration?"):
+        platform.install_nvim_conf()
 
 
     platform.platform_specific_install()
