@@ -1,0 +1,14 @@
+Llam4u.nerdtree
+PKief.material-icon-theme
+ZixuanWang.linkerscript
+adpyke.codesnap
+dan-c-underwood.arm
+mohsen1.prettify-json
+ms-python.python
+ms-vscode-remote.remote-ssh
+ms-vscode-remote.remote-ssh-edit
+ms-vscode.hexeditor
+ms-vscode.remote-explorer
+mshr-h.VerilogHDL
+pierre-payen.gdb-syntax
+vscodevim.vim

@@ -35,19 +35,22 @@ class MacOS(Platform):
         self.exec_bash(cmd)
 
     def install_vscode_extensions(self):
-        common_extensions_dir = os.path.join(DOTFILES_COMMON_DIR, "vscode_extensions")
-        macos_extensions_dir  = os.path.join(DOTFILES_MACOS_DIR,  "vscode_extensions")
+        common_extensions_txt = os.path.join(DOTFILES_COMMON_DIR, "vscode_extensions.txt")
+        macos_extensions_txt  = os.path.join(DOTFILES_MACOS_DIR,  "vscode_extensions.txt")
 
-        extensions  = [ os.path.join(common_extensions_dir, f) for f in os.listdir(common_extensions_dir) ]
-        extensions += [ os.path.join(macos_extensions_dir,  f) for f in os.listdir(macos_extensions_dir)  ]
+        extensions = []
+
+        with open(common_extensions_txt, "r") as f:
+            extensions += f.read().splitlines()
+        
+        with open(macos_extensions_txt, "r") as f:
+            extensions += f.read().splitlines()
 
         code = r"/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
 
-        for f in extensions:
-            if f.endswith(".vsix"):
-                cmd = f"{code} --install-extension {f}"
-
-                self.exec_bash(cmd)
+        for ext in extensions:
+            cmd = f"{code} --install-extension {ext}"
+            self.exec_bash(cmd)
 
 
     def platform_specific_install(self):
