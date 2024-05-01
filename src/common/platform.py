@@ -2,7 +2,7 @@ import os
 import subprocess
 from abc import ABC, abstractmethod
 
-from paths import DOTFILES_COMMON_DIR
+from paths import DOTFILES_COMMON_DIR, HOME
 
 class Platform(ABC):
     def exec_bash(self, cmd_str):
@@ -14,19 +14,21 @@ class Platform(ABC):
         pass
 
     def install_nvim_conf(self):
-        home = os.path.expanduser("~")
-
         cmd = f"""
-        mkdir -p {home}/.config/nvim
+        mkdir -p {HOME}/.config/nvim
         
-        ln -sf {DOTFILES_COMMON_DIR}/nvim_conf/.vimrc   {home}/.vimrc
-        ln -sf {DOTFILES_COMMON_DIR}/nvim_conf/init.vim {home}/.config/nvim/init.vim
+        ln -sf {DOTFILES_COMMON_DIR}/nvim_conf/.vimrc   {HOME}/.vimrc
+        ln -sf {DOTFILES_COMMON_DIR}/nvim_conf/init.vim {HOME}/.config/nvim/init.vim
 
-        ln -sf {DOTFILES_COMMON_DIR}/nvim_conf/terminal-vimrc.vim {home}/terminal-vimrc.vim
-        ln -sf {DOTFILES_COMMON_DIR}/nvim_conf/vscode-vimrc.vim   {home}/vscode-vimrc.vim
+        ln -sf {DOTFILES_COMMON_DIR}/nvim_conf/terminal-vimrc.vim {HOME}/terminal-vimrc.vim
+        ln -sf {DOTFILES_COMMON_DIR}/nvim_conf/vscode-vimrc.vim   {HOME}/vscode-vimrc.vim
         """
 
         self.exec_bash(cmd)
+
+    @abstractmethod
+    def install_vscode_conf(self):
+        pass
 
     @abstractmethod
     def platform_specific_install(self):

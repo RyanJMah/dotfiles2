@@ -1,5 +1,7 @@
 import os
 
+HOME = os.path.expanduser("~")
+
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 SRC_DIR  = os.path.dirname(THIS_DIR)
 
