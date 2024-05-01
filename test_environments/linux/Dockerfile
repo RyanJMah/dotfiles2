@@ -5,17 +5,26 @@ RUN apt update
 
 RUN apt install -y  \
     git             \
-    sudo
+    sudo            \
+    python3         \
+    python3-pip     \
+    curl
 
 # Clean up cache to reduce image size
 RUN apt clean && rm -rf /var/lib/apt/lists/*
 
 # Create a new user and add to sudo group
 RUN useradd -m testuser
-RUN usermod -aG sudo testuser
+RUN adduser testuser sudo
+
+# Set password for the user
+RUN echo 'testuser:pass' | chpasswd
+
+ADD . /home/testuser/dotfiles2
+
+RUN chown -R testuser:testuser /home/testuser
 
 USER testuser
-
 
 # Do nothing forever
 CMD ["bash", "-c", "while true; do sleep 30; done;"]

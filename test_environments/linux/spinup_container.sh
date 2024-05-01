@@ -18,18 +18,28 @@ function clean_container()
     set -e
 }
 
-clean_container
+if [[ $1 == "clean" ]]; then
+    clean_container
+    exit 0
+fi
+
+cd ../../
 
 # Build the Docker image
-docker build -t $IMAGE_NAME .
+docker buildx build                         \
+    -f test_environments/linux/Dockerfile   \
+    --platform linux/amd64                  \
+    --load                                  \
+    -t $IMAGE_NAME .
 
 # Run the container in detached mode and remove it on exit
-docker run -d --name $CONTAINER_NAME $IMAGE_NAME
-
-# Wait a bit to ensure the container is fully up and running
-sleep 2
+docker run                  \
+    -d                      \
+    --platform linux/amd64  \
+    --name $CONTAINER_NAME  \
+    $IMAGE_NAME
 
 # Attach to the container's shell, start in the home directory
-docker exec -it $CONTAINER_NAME bash -c "cd ~ && bash"
-
-clean_container
+set +e
+docker exec -it $CONTAINER_NAME bash -c "cd ~/dotfiles2 && bash"
+set -e

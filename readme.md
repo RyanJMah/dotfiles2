@@ -8,11 +8,21 @@ For the original iteration of my dotfiles, see [here](https://github.com/RyanJMa
 
 ## Dependencies
 
-Requires python3 and pip. Installation has some dependencies as well,
-install them via pip.
+* `python3`
+* `pip3`
+* `curl`
+
+Installation script has some dependencies as well, install them via pip.
 
 ```bash
 pip3 install -r requirements.txt
+```
+
+## Installation
+
+```shell
+# See --help for more options
+python3 install.py --os linux
 ```
 
 ## Test Environments
