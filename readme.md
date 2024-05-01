@@ -20,6 +20,16 @@ pip3 install -r requirements.txt
 To test the installation scripts, test environments are provided. They
 provide a "fresh" install of the target OS to run the scripts on.
 
+### Linux
+
+A docker container running Debian 11 is provided.
+
+```bash
+cd test_environments/linux
+
+./spinup_container.sh
+```
+
 ### MacOS
 
 A computer legally running MacOS is required. Apple's own virutalization
@@ -39,15 +49,4 @@ To create a fresh VM instance, simply remove the VM bundle.
 
 ```bash
 rm -rf VM.bundle
-```
-
-### Linux
-
-A docker container running Debian 11 is provided.
-
-```bash
-cd test_environments/linux
-
-./spinup_container.sh
-
 ```
