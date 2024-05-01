@@ -7,7 +7,18 @@ from paths import DOTFILES_COMMON_DIR, HOME
 class Platform(ABC):
     def exec_bash(self, cmd_str):
         for cmd in cmd_str.split("\n"):
-            subprocess.run(cmd, shell=True, text=True)
+            try:
+                subprocess.run(cmd, shell=True, text=True, check=True)
+            
+            except subprocess.CalledProcessError as e:
+                print(f"ERROR: {cmd}: {e}")
+
+    def install_aliases(self):
+        cmd = f"""
+        ln -sf {DOTFILES_COMMON_DIR}/.custom_aliases {HOME}/.custom_aliases
+        """
+
+        self.exec_bash(cmd)
 
     @abstractmethod
     def install_nvim(self):
@@ -29,6 +40,16 @@ class Platform(ABC):
     @abstractmethod
     def install_vscode_conf(self):
         pass
+
+    def install_vscode_extensions(self):
+        extensions_dir = os.path.join(DOTFILES_COMMON_DIR, "vscode_extensions")
+
+        for f in os.listdir(extensions_dir):
+            if f.endswith(".vsix"):
+                cmd = f"code --install-extension {os.path.join(extensions_dir, f)}"
+
+                self.exec_bash(cmd)
+
 
     @abstractmethod
     def platform_specific_install(self):

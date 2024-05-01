@@ -23,11 +23,25 @@ def install_all(os_type):
         platform = MacOS()
 
 
+    if prompt_user("Install custom aliases?"):
+        platform.install_aliases()
+
+
     if prompt_user("Install Neovim?"):
         platform.install_nvim()
+
 
     if prompt_user("Install Neovim configuration?"):
         platform.install_nvim_conf()
 
 
-    platform.platform_specific_install()
+    if prompt_user("Install VSCode configuration?"):
+        platform.install_vscode_conf()
+
+
+    if prompt_user("Install VSCode extensions?"):
+        platform.install_vscode_extensions()
+
+
+    if prompt_user("Run platform specific installation?"):
+        platform.platform_specific_install()
