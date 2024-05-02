@@ -55,7 +55,7 @@ class Platform(ABC):
 
     def install_aliases(self):
         cmd = f"""
-        ln -sf {DOTFILES_COMMON_DIR}/.custom_aliases {HOME}/.custom_aliases
+        ln -sf {DOTFILES_COMMON_DIR}/.custom_aliases {HOME}/custom_aliases.sh
         """
 
         self.exec_bash(cmd)

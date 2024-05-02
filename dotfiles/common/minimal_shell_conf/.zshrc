@@ -1,12 +1,16 @@
 source $HOME/custom_aliases.sh
 
-# Load version control information
-autoload -Uz vcs_info
-precmd() { vcs_info }
+source $HOME/git-prompt.sh
 
-# Colors
+RED="%{$fg[red]%}"
+GREEN="%{$fg[green]%}"
+YELLOW="%{$fg[yellow]%}"
+BLUE="%{$fg[blue]%}"
+MAGENTA="%{$fg[magenta]%}"
+CYAN="%{$fg[cyan]%}"
+WHITE="%{$fg[white]%}"
+END="%{$reset_color%}"
+
 autoload -U colors && colors
-setopt PROMPT_SUBST 
+PS1="${CYAN}%n${END} ${YELLOW}%~${END} ${BLUE}git:(${END}${MAGENTA}"$(__git_ps1)"${END}${BLUE})${END} ${GREEN}→${END} "
 
-# Prompt layout
-PROMPT='%F{cyan}%n%f %F{blue}%~%f %{%F{magenta}%}%b${vcs_info_msg_0_}%{%f%} $ '
