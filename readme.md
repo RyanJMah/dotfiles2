@@ -21,8 +21,7 @@ pip3 install -r requirements.txt
 ## Installation
 
 ```shell
-# See --help for more options
-python3 install.py --os linux
+./quick-install.sh
 ```
 
 ## Test Environments
