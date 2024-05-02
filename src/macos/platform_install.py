@@ -25,7 +25,7 @@ class MacOS(Platform):
     def install_aliases(self):
         super().install_aliases()
 
-        cmd = """
+        cmd = f"""
         ln -sf {DOTFILES_MACOS_DIR}/platform_custom_aliases.sh {HOME}/platform_custom_aliases.sh
         """
         self.exec_bash(cmd)
