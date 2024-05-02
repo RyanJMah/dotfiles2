@@ -57,7 +57,7 @@ class Platform(ABC):
 
     def install_aliases(self):
         cmd = f"""
-        ln -sf {DOTFILES_COMMON_DIR}/custom_aliases.sh {HOME}/custom_aliases.sh
+        ln -sf {DOTFILES_COMMON_DIR}/.custom_aliases.sh {HOME}/.custom_aliases.sh
         """
 
         self.exec_bash(cmd)
@@ -70,8 +70,8 @@ class Platform(ABC):
         ln -sf {DOTFILES_COMMON_DIR}/nvim_conf/.vimrc   {HOME}/.vimrc
         ln -sf {DOTFILES_COMMON_DIR}/nvim_conf/init.vim {HOME}/.config/nvim/init.vim
 
-        ln -sf {DOTFILES_COMMON_DIR}/nvim_conf/terminal-vimrc.vim {HOME}/terminal-vimrc.vim
-        ln -sf {DOTFILES_COMMON_DIR}/nvim_conf/vscode-vimrc.vim   {HOME}/vscode-vimrc.vim
+        ln -sf {DOTFILES_COMMON_DIR}/nvim_conf/.terminal-vimrc.vim {HOME}/.terminal-vimrc.vim
+        ln -sf {DOTFILES_COMMON_DIR}/nvim_conf/.vscode-vimrc.vim   {HOME}/.vscode-vimrc.vim
         """
 
         self.exec_bash(cmd)

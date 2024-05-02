@@ -1,4 +1,4 @@
-source $HOME/custom_aliases.sh
+source $HOME/.custom_aliases.sh
 source $HOME/.git-prompt.sh
 
 autoload -U colors && colors

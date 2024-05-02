@@ -11,7 +11,7 @@ from common.paths import HOME, DOTFILES_LINUX_DIR
 
 class Linux(Platform):
     def install_nvim(self):
-        cmd = """
+        cmd = f"""
         curl -LO https://github.com/neovim/neovim/releases/download/v0.9.5/nvim-linux64.tar.gz
         tar -xzf nvim-linux64.tar.gz
 
@@ -23,13 +23,19 @@ class Linux(Platform):
 
         self.exec_bash(cmd)
 
-    def install_aliases(self):
-        super().install_aliases()
+    def get_code_cmd(self) -> str:
+        return "/usr/bin/code"
 
-        cmd = """
-        ln -sf {DOTFILES_LINUX_DIR}/platform_custom_aliases.sh {HOME}/platform_custom_aliases.sh
-        """
-        self.exec_bash(cmd)
+    def get_code_conf_dir(self) -> str:
+        return f"{HOME}/.config/Code/User"
 
     def platform_specific_install(self):
         print("running platform specific install for linux...")
+
+    def install_aliases(self):
+        super().install_aliases()
+
+        cmd = f"""
+        ln -sf {DOTFILES_LINUX_DIR}/.platform_custom_aliases.sh {HOME}/.platform_custom_aliases.sh
+        """
+        self.exec_bash(cmd)

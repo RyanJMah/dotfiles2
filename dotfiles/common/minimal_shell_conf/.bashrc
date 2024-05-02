@@ -1,5 +1,5 @@
 # Source external scripts
-source $HOME/custom_aliases.sh
+source $HOME/.custom_aliases.sh
 source $HOME/.git-prompt.sh
 
 # Function to determine color based on exit status
