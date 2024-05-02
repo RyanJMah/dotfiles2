@@ -7,6 +7,7 @@ sys.path.append(SRC_DIR)
 from linux.platform_install import Linux
 from macos.platform_install import MacOS
 
+
 def prompt_user(msg: str) -> bool:
     while True:
         user_input = input(f"{msg} [Y/n]: ").strip().lower()
@@ -21,6 +22,8 @@ def prompt_user_choice(msg: str, choices: list) -> str:
         if user_input in choices:
             return user_input
 
+        print(f"Invalid choice: {user_input}")
+
 
 def install_all(os_type):
     if os_type == "linux":
@@ -30,6 +33,8 @@ def install_all(os_type):
         platform = MacOS()
 
     if prompt_user("Install shell configuration?"):
+        platform.install_aliases()
+
         shell_choice = prompt_user_choice("Choose shell", ["oh-my-zsh", "minimal"])
 
         if shell_choice == "oh-my-zsh":
@@ -37,9 +42,6 @@ def install_all(os_type):
         
         elif shell_choice == "minimal":
             platform.install_minimal_shell_conf()
-
-    if prompt_user("Install custom aliases?"):
-        platform.install_aliases()
 
 
     if prompt_user("Install Neovim?"):

@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 from paths import DOTFILES_COMMON_DIR, HOME
 
 class Platform(ABC):
+    ##############################################################################
     @abstractmethod
     def install_nvim(self):
         pass
@@ -20,8 +21,10 @@ class Platform(ABC):
     @abstractmethod
     def get_code_conf_dir(self) -> str:
         pass
+    ##############################################################################
 
 
+    ##############################################################################
     def exec_bash(self, cmd_str):
         for cmd in cmd_str.split("\n"):
             try:
@@ -29,6 +32,26 @@ class Platform(ABC):
             
             except subprocess.CalledProcessError as e:
                 print(f"ERROR: {cmd}: {e}")
+    ##############################################################################
+
+
+    ##############################################################################
+    def install_oh_my_zsh_conf(self):
+        cmd = """
+        sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+        source $HOME/.zshrc
+        """
+        self.exec_bash(cmd)
+    
+
+    def install_minimal_shell_conf(self):
+        cmd = f"""
+        ln -sf {DOTFILES_COMMON_DIR}/.zshrc  {HOME}/.zshrc
+        ln -sf {DOTFILES_COMMON_DIR}/.bashrc {HOME}/.bashrc
+        ln -sf {DOTFILES_COMMON_DIR}/.tcshrc {HOME}/.tcshrc
+        """
+        self.exec_bash(cmd)
+
 
     def install_aliases(self):
         cmd = f"""
@@ -84,3 +107,4 @@ class Platform(ABC):
         rm ryan-vscode-theme-2.0.0.vsix
         """
         self.exec_bash(cmd)
+    ##############################################################################
