@@ -5,6 +5,23 @@ from abc import ABC, abstractmethod
 from paths import DOTFILES_COMMON_DIR, HOME
 
 class Platform(ABC):
+    @abstractmethod
+    def install_nvim(self):
+        pass
+
+    @abstractmethod
+    def platform_specific_install(self):
+        pass
+
+    @abstractmethod
+    def get_code_cmd(self) -> str:
+        pass
+
+    @abstractmethod
+    def get_code_conf_dir(self) -> str:
+        pass
+
+
     def exec_bash(self, cmd_str):
         for cmd in cmd_str.split("\n"):
             try:
@@ -20,9 +37,6 @@ class Platform(ABC):
 
         self.exec_bash(cmd)
 
-    @abstractmethod
-    def install_nvim(self):
-        pass
 
     def install_nvim_conf(self):
         cmd = f"""
@@ -37,14 +51,36 @@ class Platform(ABC):
 
         self.exec_bash(cmd)
 
-    @abstractmethod
     def install_vscode_conf(self):
-        pass
+        vscode_dir = self.get_code_conf_dir()
 
-    @abstractmethod
+        cmd = f"""
+        mkdir -p {vscode_dir}
+
+        ln -sf {DOTFILES_COMMON_DIR}/vscode_conf/settings.json    {vscode_dir}/settings.json
+        ln -sf {DOTFILES_COMMON_DIR}/vscode_conf/keybindings.json {vscode_dir}/keybindings.json
+        """
+
+        self.exec_bash(cmd)
+
     def install_vscode_extensions(self):
-        pass
+        extensions_txt = os.path.join(DOTFILES_COMMON_DIR, "vscode_extensions.txt")
 
-    @abstractmethod
-    def platform_specific_install(self):
-        pass
+        # code = r"/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
+        code = self.get_code_cmd()
+
+        with open(extensions_txt, "r") as f:
+            extensions = f.read().splitlines()
+
+        for ext in extensions:
+            cmd = f"{code} --install-extension {ext}"
+            self.exec_bash(cmd)
+
+        # Install my own custom theme
+        cmd = f"""
+        curl -LO https://github.com/RyanJMah/Ryan-VSCode-Theme/releases/download/2.0.0/ryan-vscode-theme-2.0.0.vsix
+
+        {code} --install-extension ryan-vscode-theme-2.0.0.vsix
+        rm ryan-vscode-theme-2.0.0.vsix
+        """
+        self.exec_bash(cmd)

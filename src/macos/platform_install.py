@@ -22,39 +22,11 @@ class MacOS(Platform):
 
         self.exec_bash(cmd)
 
-    def install_vscode_conf(self):
-        vscode_dir = f"{HOME}/Library/Application\\ Support/Code/User"
+    def get_code_conf_dir(self) -> str:
+        return f"{HOME}/Library/Application\\ Support/Code/User"
 
-        cmd = f"""
-        mkdir -p {vscode_dir}
-
-        ln -sf {DOTFILES_COMMON_DIR}/vscode_conf/settings.json    {vscode_dir}/settings.json
-        ln -sf {DOTFILES_COMMON_DIR}/vscode_conf/keybindings.json {vscode_dir}/keybindings.json
-        """
-
-        self.exec_bash(cmd)
-
-    def install_vscode_extensions(self):
-        extensions_txt = os.path.join(DOTFILES_COMMON_DIR, "vscode_extensions.txt")
-
-        code = r"/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
-
-        with open(extensions_txt, "r") as f:
-            extensions = f.read().splitlines()
-
-        for ext in extensions:
-            cmd = f"{code} --install-extension {ext}"
-            self.exec_bash(cmd)
-
-        # Install my own custom theme
-        cmd = f"""
-        curl -LO https://github.com/RyanJMah/Ryan-VSCode-Theme/releases/download/2.0.0/ryan-vscode-theme-2.0.0.vsix
-
-        {code} --install-extension ryan-vscode-theme-2.0.0.vsix
-        rm ryan-vscode-theme-2.0.0.vsix
-        """
-        self.exec_bash(cmd)
-
+    def get_code_cmd(self) -> str:
+        return r"/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
 
     def platform_specific_install(self):
         pass
