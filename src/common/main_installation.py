@@ -14,6 +14,13 @@ def prompt_user(msg: str) -> bool:
         if user_input in ["y", "n"]:
             return user_input == "y"
 
+def prompt_user_choice(msg: str, choices: list) -> str:
+    while True:
+        user_input = input(f"{msg} {choices}: ").strip().lower()
+
+        if user_input in choices:
+            return user_input
+
 
 def install_all(os_type):
     if os_type == "linux":
@@ -22,6 +29,14 @@ def install_all(os_type):
     elif os_type == "macos":
         platform = MacOS()
 
+    if prompt_user("Install shell configuration?"):
+        shell_choice = prompt_user_choice("Choose shell", ["oh-my-zsh", "minimal"])
+
+        if shell_choice == "oh-my-zsh":
+            platform.install_oh_my_zsh_conf()
+        
+        elif shell_choice == "minimal":
+            platform.install_minimal_shell_conf()
 
     if prompt_user("Install custom aliases?"):
         platform.install_aliases()

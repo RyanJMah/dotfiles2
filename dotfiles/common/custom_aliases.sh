@@ -21,4 +21,11 @@ function install_alacritty_terminfo {
 alias vim="nvim"
 alias clear="clear && printf '\e[3J'"
 
+export PATH=$PATH:$HOME/.local/bin
+export PATH=$PATH:$HOME/.local/nvim/bin
+
+export PATH=$PATH:$(python -c "import site; print(site.USER_BASE + '/bin')")
+
+source $HOME/platform_custom_aliases.sh
+
 stty -ixon

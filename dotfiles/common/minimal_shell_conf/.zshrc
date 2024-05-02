@@ -1,0 +1,1 @@
+source $HOME/custom_aliases.sh

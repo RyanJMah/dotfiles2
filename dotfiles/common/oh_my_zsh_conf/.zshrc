@@ -5,6 +5,8 @@ export ZSH="$HOME/.oh-my-zsh"
 export ZSH_THEME="ryan-apple"
 export ZSH_THEME="ryan-debian"
 
+export VIRTUAL_ENV_DISABLE_PROMPT=0
+
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
 # a theme from this variable instead of looking in $ZSH/themes/
@@ -43,4 +45,4 @@ plugins=(git zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
-source $HOME/.custom_aliases
+source $HOME/custom_aliases.sh
