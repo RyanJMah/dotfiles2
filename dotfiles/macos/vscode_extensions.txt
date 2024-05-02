@@ -1,1 +1,1 @@
-ms-vscode.cpptools@darwin-arm64
+cpptools-osx-arm64

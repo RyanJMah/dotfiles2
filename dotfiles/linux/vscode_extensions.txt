@@ -1,1 +1,1 @@
-ms-vscode.cpptools@linux-x64
+cpptools-linux
