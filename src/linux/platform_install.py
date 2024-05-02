@@ -7,7 +7,7 @@ SRC_DIR  = os.path.dirname(THIS_DIR)
 sys.path.append(SRC_DIR)
 
 from common.platform import Platform
-from common.paths import HOME
+from common.paths import HOME, DOTFILES_LINUX_DIR
 
 class Linux(Platform):
     def install_nvim(self):
@@ -23,6 +23,13 @@ class Linux(Platform):
 
         self.exec_bash(cmd)
 
+    def install_aliases(self):
+        super().install_aliases()
+
+        cmd = """
+        ln -sf {DOTFILES_LINUX_DIR}/platform_custom_aliases.sh {HOME}/platform_custom_aliases.sh
+        """
+        self.exec_bash(cmd)
 
     def platform_specific_install(self):
         print("running platform specific install for linux...")

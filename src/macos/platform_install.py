@@ -22,6 +22,14 @@ class MacOS(Platform):
 
         self.exec_bash(cmd)
 
+    def install_aliases(self):
+        super().install_aliases()
+
+        cmd = """
+        ln -sf {DOTFILES_MACOS_DIR}/platform_custom_aliases.sh {HOME}/platform_custom_aliases.sh
+        """
+        self.exec_bash(cmd)
+
     def get_code_conf_dir(self) -> str:
         return f"{HOME}/Library/Application\\ Support/Code/User"
 
