@@ -12,7 +12,7 @@ For the original iteration of my dotfiles, see [here](https://github.com/RyanJMa
 * `pip3`
 * `curl`
 
-Installation script has some dependencies as well, install them via pip.
+The installation scripts have some dependencies as well, install them via pip.
 
 ```bash
 pip3 install -r requirements.txt
