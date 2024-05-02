@@ -2,6 +2,9 @@ source $HOME/custom_aliases.sh
 
 source $HOME/.git-prompt.sh
 
+autoload -U colors && colors
+setopt PROMPT_SUBST
+
 RED="%{$fg[red]%}"
 GREEN="%{$fg[green]%}"
 YELLOW="%{$fg[yellow]%}"
@@ -11,8 +14,4 @@ CYAN="%{$fg[cyan]%}"
 WHITE="%{$fg[white]%}"
 END="%{$reset_color%}"
 
-setopt PROMPT_SUBST
-autoload -U colors && colors
 PS1='${CYAN}%n${END} ${YELLOW}%~${END}${MAGENTA}$(__git_ps1 " (%s)")${END} ${GREEN}→${END} '
-# PS1='[%n@%m %c$(__git_ps1 " (%s)")]\$ '
-
