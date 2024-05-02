@@ -12,7 +12,7 @@ prompt_status() {
 }
 
 # Customize the PS1 variable to define your prompt
-PS1='\[\033[0;36m\]\u\[\033[00m\] \[\033[0;33m\]\w\[\033[00m\]$(__git_ps1 " (%s)") $(prompt_status)→\[\033[00m\] '
+PS1='\[\033[0;36m\]\u\[\033[00m\] \[\033[0;33m\]\w\[\033[00m\]\[\033[0;34m\]$(__git_ps1 " git:(\[\033[00m\]\[\033[0;35m\]%s\[\033[00m\]\[\033[0;34m\])")\[\033[00m\] $(prompt_status)→\[\033[00m\] '
 
 # Enable color support of ls and also add handy aliases
 alias ls='ls --color=auto'
