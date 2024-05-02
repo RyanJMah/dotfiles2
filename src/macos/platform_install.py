@@ -47,10 +47,10 @@ class MacOS(Platform):
             self.exec_bash(cmd)
 
         # Install my own custom theme
-        cmd = """
+        cmd = f"""
         curl -LO https://github.com/RyanJMah/Ryan-VSCode-Theme/releases/download/2.0.0/ryan-vscode-theme-2.0.0.vsix
 
-        code --install-extension ryan-vscode-theme-2.0.0.vsix
+        {code} --install-extension ryan-vscode-theme-2.0.0.vsix
         rm ryan-vscode-theme-2.0.0.vsix
         """
         self.exec_bash(cmd)
