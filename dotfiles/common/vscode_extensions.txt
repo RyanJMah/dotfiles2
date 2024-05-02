@@ -4,6 +4,7 @@ ZixuanWang.linkerscript
 adpyke.codesnap
 dan-c-underwood.arm
 mohsen1.prettify-json
+ms-vscode.cpptools
 ms-python.python
 ms-vscode-remote.remote-ssh
 ms-vscode-remote.remote-ssh-edit
