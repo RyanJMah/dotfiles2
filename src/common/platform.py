@@ -46,9 +46,9 @@ class Platform(ABC):
 
     def install_minimal_shell_conf(self):
         cmd = f"""
-        ln -sf {DOTFILES_COMMON_DIR}/.zshrc  {HOME}/.zshrc
-        ln -sf {DOTFILES_COMMON_DIR}/.bashrc {HOME}/.bashrc
-        ln -sf {DOTFILES_COMMON_DIR}/.tcshrc {HOME}/.tcshrc
+        ln -sf {DOTFILES_COMMON_DIR}/minimal_shell_conf/.zshrc  {HOME}/.zshrc
+        ln -sf {DOTFILES_COMMON_DIR}/minimal_shell_conf/.bashrc {HOME}/.bashrc
+        ln -sf {DOTFILES_COMMON_DIR}/minimal_shell_conf/.tcshrc {HOME}/.tcshrc
         """
         self.exec_bash(cmd)
 
