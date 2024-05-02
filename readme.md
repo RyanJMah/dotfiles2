@@ -11,6 +11,9 @@ For the original iteration of my dotfiles, see [here](https://github.com/RyanJMa
 * `python3`
 * `pip3`
 * `curl`
+* `tar`
+* `make`
+* A C compiler
 
 The installation scripts have some dependencies as well, install them via pip.
 
