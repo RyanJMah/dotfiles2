@@ -8,7 +8,9 @@ RUN apt install -y  \
     sudo            \
     python3         \
     python3-pip     \
-    curl
+    curl            \
+    libssl-dev      \
+    pkg-config 
 
 # Clean up cache to reduce image size
 RUN apt clean && rm -rf /var/lib/apt/lists/*

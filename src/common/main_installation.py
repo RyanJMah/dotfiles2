@@ -52,6 +52,10 @@ def install_all(os_type):
         platform.install_nvim_conf()
 
 
+    if prompt_user("Install Tmux?"):
+        platform.install_tmux()
+
+
     if prompt_user("Install VSCode configuration?"):
         platform.install_vscode_conf()
 
