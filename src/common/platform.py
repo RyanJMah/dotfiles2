@@ -49,6 +49,8 @@ class Platform(ABC):
         ln -sf {DOTFILES_COMMON_DIR}/minimal_shell_conf/.zshrc  {HOME}/.zshrc
         ln -sf {DOTFILES_COMMON_DIR}/minimal_shell_conf/.bashrc {HOME}/.bashrc
         ln -sf {DOTFILES_COMMON_DIR}/minimal_shell_conf/.tcshrc {HOME}/.tcshrc
+
+        ln -sf {DOTFILES_COMMON_DIR}/minimal_shell_conf/git-prompt.sh {HOME}/git-prompt.sh
         """
         self.exec_bash(cmd)
 

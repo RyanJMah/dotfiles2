@@ -12,5 +12,5 @@ WHITE="%{$fg[white]%}"
 END="%{$reset_color%}"
 
 autoload -U colors && colors
-PS1="${CYAN}%n${END} ${YELLOW}%~${END} ${BLUE}git:(${END}${MAGENTA}"$(__git_ps1)"${END}${BLUE})${END} ${GREEN}→${END} "
+PS1="${CYAN}%n${END} ${YELLOW}%~${END} ${MAGENTA}"$(__git_ps1)"${END} ${GREEN}→${END} "
 
