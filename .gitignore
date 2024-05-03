@@ -6,3 +6,4 @@ neovim
 Build
 VM.bundle
 
+.mypy_cache
