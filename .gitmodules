@@ -1,0 +1,3 @@
+[submodule "test_environments/macos/MacOS-VM"]
+	path = test_environments/macos
+	url = https://github.com/RyanJMah/MacOS-VM
