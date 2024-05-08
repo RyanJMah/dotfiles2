@@ -27,9 +27,11 @@ ADD . /home/testuser/dotfiles2
 
 RUN chown -R testuser:testuser /home/testuser
 
+# Set default shell of testuser to bash
+RUN chsh -s /bin/bash testuser
+
 USER testuser
 
-SHELL ["/bin/bash", "-c"]
 
 # Do nothing forever
 CMD ["bash", "-c", "while true; do sleep 30; done;"]

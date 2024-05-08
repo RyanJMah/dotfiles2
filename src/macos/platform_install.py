@@ -29,7 +29,9 @@ class MacOS(Platform):
         return r"/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
 
     def platform_tmux_configure_flags(self) -> Dict[str, str]:
-        return {}
+        return {
+            "tmux": "--enable-utf8proc"
+        }
     
     def platform_specific_install(self):
         pass
