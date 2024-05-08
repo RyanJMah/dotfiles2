@@ -6,7 +6,6 @@ SRC_DIR  = os.path.dirname(THIS_DIR)
 sys.path.append(SRC_DIR)
 
 from common.platform import Platform
-from common.paths import HOME, DOTFILES_COMMON_DIR, DOTFILES_MACOS_DIR
 
 class MacOS(Platform):
     def install_nvim(self):
@@ -16,14 +15,14 @@ class MacOS(Platform):
         xattr -c ./nvim-macos.tar.gz
         tar -xzf nvim-macos.tar.gz
 
-        mkdir -p {HOME}/.local
-        mv nvim-macos {HOME}/.local/nvim
+        mkdir -p {self.paths.HOME}/.local
+        mv nvim-macos {self.paths.HOME}/.local/nvim
         """
 
         self.exec_bash(cmd)
 
     def get_code_conf_dir(self) -> str:
-        return f"{HOME}/Library/Application\\ Support/Code/User"
+        return f"{self.paths.HOME}/Library/Application\\ Support/Code/User"
 
     def get_code_cmd(self) -> str:
         return r"/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
@@ -35,6 +34,6 @@ class MacOS(Platform):
         super().install_aliases()
 
         cmd = f"""
-        ln -sf {DOTFILES_MACOS_DIR}/.platform_custom_aliases.sh {HOME}/.platform_custom_aliases.sh
+        ln -sf {self.paths.DOTFILES_MACOS_DIR}/.platform_custom_aliases.sh {self.paths.HOME}/.platform_custom_aliases.sh
         """
         self.exec_bash(cmd)

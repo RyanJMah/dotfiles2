@@ -1,9 +1,11 @@
 import os
 import sys
 
-from paths import SRC_DIR
+from common.app_paths import SRC_DIR
+from common.app_paths import LocalPaths, RemotePaths
 sys.path.append(SRC_DIR)
 
+from shell_wrapper import LocalShell, RemoteShell
 from linux.platform_install import Linux
 from macos.platform_install import MacOS
 
@@ -25,12 +27,20 @@ def prompt_user_choice(msg: str, choices: list) -> str:
         print(f"Invalid choice: {user_input}")
 
 
-def install_all(os_type):
-    if os_type == "linux":
-        platform = Linux()
-    
-    elif os_type == "macos":
-        platform = MacOS()
+def install_all(os_type, remote, user, password, priv_key):
+    if remote is not None:
+        shell = RemoteShell(remote, user, password, priv_key)
+        paths = RemotePaths()
+    else:
+        shell = LocalShell()
+        paths = LocalPaths()
+
+
+    if os_type == "macos":
+        platform = MacOS(shell)
+    else:
+        platform = Linux(shell)
+
 
     if prompt_user("Install shell configuration?"):
         platform.install_aliases()

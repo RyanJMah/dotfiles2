@@ -28,4 +28,7 @@ export PATH=$PATH:$(python3 -c "import site; print(site.USER_BASE + '/bin')")
 
 source $HOME/.platform_custom_aliases.sh
 
+if [[ $- == *i* ]];
+then
 stty -ixon
+fi
