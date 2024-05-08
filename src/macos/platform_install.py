@@ -33,6 +33,8 @@ class MacOS(Platform):
 
     def platform_tmux_configure_flags(self) -> Dict[str, str]:
         return {
+            "libevent": "--enable-shared",
+            "ncurses": "--with-shared",
             "tmux": "--enable-utf8proc"
         }
     

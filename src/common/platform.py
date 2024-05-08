@@ -189,7 +189,7 @@ class Platform(ABC):
 
         cd libevent-*/
 
-        ./configure --prefix=$INSTALL_DIR {libevent_flags}
+        ./configure --prefix=$INSTALL_DIR --disable-openssl {libevent_flags}
         make -j && make install
 
         cd ..
