@@ -19,6 +19,17 @@ For the original iteration of my dotfiles, see [here](https://github.com/RyanJMa
 * `make`
 * A C compiler
 
+`tmux` doesn't have stand-alone pre-built binaries like `nvim` does, so the install scripts
+have to build it from source.
+
+As such, if you want the tmux installation you will need some more dependencies - notably,
+the following:
+
+* libssl-dev
+* pkg-config
+* bison
+
+
 The installation scripts have some dependencies as well, install them via pip.
 
 ```bash
