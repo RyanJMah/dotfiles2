@@ -258,6 +258,39 @@ let g:winresizer_horiz_resize = 1
 "-----------------------------------------------------------------------------------
 
 "-----------------------------------------------------------------------------------
+" Treesitter
+lua << EOF
+require("nvim-autopairs").setup {}
+
+require'nvim-treesitter.configs'.setup {
+    ensure_installed = {
+        "vim",
+        "lua",
+        "c",
+        "cpp",
+        "make",
+        "cmake",
+        "devicetree",
+        "python",
+        "matlab",
+        "dockerfile",
+        "json",
+        "jsonc",
+        "verilog",
+        "gitcommit",
+        "gitignore"
+    },
+
+    highlight = {
+        enable = true,
+    },
+
+    sync_install = false,
+}
+EOF
+""-----------------------------------------------------------------------------------
+
+"-----------------------------------------------------------------------------------
 " File explorer
 
 nmap <silent> <C-B> :silent NvimTreeToggle<CR>
