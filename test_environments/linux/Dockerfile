@@ -8,7 +8,11 @@ RUN apt install -y  \
     sudo            \
     python3         \
     python3-pip     \
-    curl
+    curl            \
+    libssl-dev      \
+    libutf8proc-dev \
+    pkg-config      \
+    bison
 
 # Clean up cache to reduce image size
 RUN apt clean && rm -rf /var/lib/apt/lists/*

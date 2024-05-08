@@ -11,10 +11,6 @@ class Platform(ABC):
         pass
 
     @abstractmethod
-    def install_tmux(self):
-        pass
-
-    @abstractmethod
     def platform_specific_install(self):
         pass
 
@@ -113,4 +109,79 @@ class Platform(ABC):
         rm ryan-vscode-theme-2.0.0.vsix
         """
         self.exec_bash(cmd)
+
+    def install_tmux(self):
+        install_dir = os.path.join(HOME, ".local", "tmux")
+
+        cmd = f"""
+        set -e
+
+        mkdir -p {install_dir}
+
+        # install libevent
+
+        curl -LO https://github.com/libevent/libevent/releases/download/release-2.1.12-stable/libevent-2.1.12-stable.tar.gz
+
+        tar -zxf libevent-*.tar.gz
+        rm libevent-2.1.12-stable.tar.gz
+
+        cd libevent-*/
+
+        ./configure --prefix={install_dir} --enable-shared
+        make -j && make install
+
+        cd ..
+
+        # install ncurses
+        curl -LO https://ftp.gnu.org/gnu/ncurses/ncurses-6.3.tar.gz
+
+        tar -zxf ncurses-*.tar.gz
+        rm ncurses-6.3.tar.gz
+
+        cd ncurses-*/
+        ./configure --prefix={install_dir} --with-shared --with-termlib --enable-pc-files --with-pkg-config-libdir={install_dir}/lib/pkgconfig
+        make -j && make install
+
+        cd ..
+
+        # install tmux
+        curl -LO https://github.com/tmux/tmux/releases/download/3.4/tmux-3.4.tar.gz
+
+        tar -zxf tmux-*.tar.gz
+        rm tmux-3.4.tar.gz
+
+        cd tmux-*/
+        PKG_CONFIG_PATH={install_dir}/lib/pkgconfig ./configure --prefix={install_dir} --enable-utf8proc
+        make -j && make install
+
+        rm -rf libevent-* ncurses-* tmux-*
+        """
+        self.exec_bash(cmd)
+
+        # Alias to set LD_LIBRARY_PATH before running tmux
+        alias_script = f"""
+        #!/usr/bin/env bash
+
+        LD_LIBRARY_PATH={install_dir}/lib:${{LD_LIBRARY_PATH}} ${{HOME}}/.local/tmux/bin/tmux "$@"
+
+        """
+
+        cmd = f"""
+        set -e
+
+        mkdir -p {HOME}/.local/bin
+        cd {HOME}/.local/bin
+
+        touch tmux
+        chmod +x tmux
+
+        echo '{alias_script}' > tmux
+
+        # Test the alias
+        {HOME}/.local/bin/tmux -V
+        """
+        self.exec_bash(cmd)
+
+
+
     ##############################################################################
