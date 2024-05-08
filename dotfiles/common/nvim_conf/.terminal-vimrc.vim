@@ -155,58 +155,6 @@ nnoremap <silent> <Leader>bd :Bclose<CR>
 "-----------------------------------------------------------------------------------
 
 "-----------------------------------------------------------------------------------
-" PLUGINS
-set nocompatible
-call plug#begin("~/.vim/plugged")
-
-Plug 'RyanJMah/Ryan-VIM-Theme'              " color scheme
-
-Plug 'nvim-tree/nvim-tree.lua'              " file explorer
-Plug 'nvim-tree/nvim-web-devicons'
-
-Plug 'akinsho/bufferline.nvim'              " Buffer 'tabs'
-
-Plug 'vim-airline/vim-airline'              " statusline
-Plug 'vim-airline/vim-airline-themes'       " statusline themes
-
-Plug 'airblade/vim-gitgutter'               " git diff
-Plug 'tpope/vim-fugitive'                   " git branch for airline
-Plug 'zivyangll/git-blame.vim'              " blame
-
-Plug 'RaafatTurki/hex.nvim'                 " hex editing
-
-" Plug 'NMAC427/guess-indent.nvim'            " auto detect indentation
-Plug 'lukas-reineke/indent-blankline.nvim'  " indent guide
-Plug 'tpope/vim-commentary'                 " comment out lines
-Plug 'karb94/neoscroll.nvim'                " smooth scrolling
-Plug 'norcalli/nvim-colorizer.lua'          " preview hex colors
-
-Plug 'neoclide/coc.nvim', {'branch': 'release'}                 " autocomplete & linting
-
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}     " syntax highlighting
-" Plug 'p00f/nvim-ts-rainbow'
-Plug 'mrjones2014/nvim-ts-rainbow'
-Plug 'windwp/nvim-autopairs'
-Plug 'nvim-treesitter/playground'
-
-Plug 'nvim-telescope/telescope.nvim'    " fuzzy file searching
-Plug 'nvim-lua/plenary.nvim'
-
-Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npm install' }
-
-Plug 'simeji/winresizer'                    " pane resizing
-
-Plug 'andweeb/presence.nvim'
-" Plug 'vimsence/vimsence'
-
-Plug 'vim-scripts/AnsiEsc.vim'      " ansi color codes for log files
-
-Plug 'github/copilot.vim', {'branch': 'release'}
-
-call plug#end()
-"-----------------------------------------------------------------------------------
-
-"-----------------------------------------------------------------------------------
 " KEYMAPINGS
 
 " SCROLLING
@@ -216,8 +164,8 @@ require("neoscroll").setup({
 })
 
 local t = {}
-t['<C-u>'] = {"scroll", {"-0.275", "false", "55"}}
-t['<C-d>'] = {"scroll", {"0.275", "false", "55"}}
+t['<C-u>'] = {"scroll", {"-0.35", "false", "55"}}
+t['<C-d>'] = {"scroll", {"0.35",  "false", "55"}}
 
 require("neoscroll.config").set_mappings(t)
 EOF
@@ -251,10 +199,6 @@ nnoremap <silent> bp :BufferLineCyclePrev<CR>
 nnoremap <silent> bd :Bclose<CR>
 
 
-" nnoremap <silent> bn :bn<CR>
-" nnoremap <silent> bp :bp<CR>
-" nnoremap <silent> bd :Bclose<CR>
-
 " comment out line
 nnoremap <silent> <C-/> :Commentary<CR>
 vnoremap <silent> <C-/> :Commentary<CR>
@@ -271,18 +215,11 @@ command! Search :Telescope live_grep
 " Open terminal
 command! NewTerm :call termopen($SHELL)
 
-" echo git blame
-command! Blame :call gitblame#echo()
-
-" fix the shitty rainbow plugin by toggling it
-command! FixRainbow :TSToggle rainbow | :TSToggle rainbow
-
 " Alt+t to toggle terminal
 nnoremap <silent> <A-t> :call TermToggle(12)<CR>
 inoremap <silent> <A-t> <Esc>:call TermToggle(12)<CR>
 tnoremap <silent> <A-t> <C-\><C-n>:call TermToggle(12)<CR>
 tnoremap <silent> <Esc> <C-\><C-n>
-" tnoremap <C-W> <C-\><C-n><C-W>
 
 " Unmap some stuff cus they're annoying
 inoremap <C-A> <NOP>
@@ -300,7 +237,7 @@ vnoremap <F1> <NOP>
 " COLOR SCHEME
 
 set termguicolors
-" let g:sonokai_style = 'dark'
+let g:sonokai_style = 'dark'
 let g:sonokai_style = 'darker'
 let g:airline_theme = 'sonokai'
 let g:sonokai_disable_italic_comment = 0
@@ -579,84 +516,7 @@ let g:airline#extensions#tabline#ignore_bufadd_pat = 'defx|gundo|nerd_tree|start
 let g:airline_filetype_overrides = {
     \ 'NvimTree': [ "NvimTree", '' ]
 \ }
-
 "-----------------------------------------------------------------------------------
-
-"-----------------------------------------------------------------------------------
-" Github Copilot
-" imap <silent><script><expr> <C-j> copilot#Accept("\<CR>")
-" let g:copilot_no_tab_map = v:true
-"-----------------------------------------------------------------------------------
-
-"-----------------------------------------------------------------------------------
-" Treesitter
-lua << EOF
-require("nvim-autopairs").setup {}
-
-require'nvim-treesitter.configs'.setup {
-  -- A list of parser names, or "all"
-    ensure_installed = {
-        "vim",
-        "lua",
-        "c",
-        "cpp",
-        "make",
-        "cmake",
-        "devicetree",
-        "python",
-        "matlab",
-        "dockerfile",
-        "json",
-        "jsonc",
-        "verilog",
-        "gitcommit",
-        "gitignore"
-    },
-
-    -- Install parsers synchronously (only applied to `ensure_installed`)
-    sync_install = false,
-
-    highlight = {
-        -- `false` will disable the whole extension
-        enable = true,
-
-        -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
-        -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
-        -- the name of the parser)
-        -- list of language that will be disabled
-        disable = {},
-
-        -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-        -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-        -- Using this option may slow down your editor, and you may see some duplicate highlights.
-        -- Instead of true it can also be a list of languages
-        additional_vim_regex_highlighting = true,
-    },
-    rainbow = {
-        enable = true,
-        -- disable = { "jsx", "cpp" }, list of languages you want to disable the plugin for
-        extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
-        max_file_lines = nil, -- Do not enable for files with more than n lines, int
-        colors = {
-            "#feb868",
-            "#cd64ce",
-            "#85c7f2"
-        } -- table of hex strings
-    }
-}
-EOF
-hi rainbowcol1 guifg=#feb868
-hi rainbowcol2 guifg=#cd64ce
-hi rainbowcol3 guifg=#85c7f2
-
-hi rainbowcol4 guifg=#feb868
-hi rainbowcol5 guifg=#cd64ce
-hi rainbowcol6 guifg=#85c7f2
-
-hi rainbowcol7 guifg=#feb868
-hi rainbowcol8 guifg=#cd64ce
-hi rainbowcol9 guifg=#85c7f2
-""-----------------------------------------------------------------------------------
 
 "-----------------------------------------------------------------------------------
 " indent blankline
@@ -666,15 +526,10 @@ require("ibl").setup()
 require("ibl").config = {
     buftype_exclude = {"terminal", "NvimTree"},
     show_first_indent_level = true,
-    show_current_context = true,
-    show_current_context_start = false,
-    -- use_treesitter = true,
     char = '│',
-    context_char = '▎',
 }
 EOF
 "-----------------------------------------------------------------------------------
-
 
 "-----------------------------------------------------------------------------------
 " Commentary
@@ -733,155 +588,19 @@ EOF
 "-----------------------------------------------------------------------------------
 
 "-----------------------------------------------------------------------------------
-" guess indent
-"lua << EOF
-"require("guess-indent").setup {
-"    filetype_exclude = {
-"        "nerdtree",
-"  },
-"}
-"EOF
-"-----------------------------------------------------------------------------------
-
-"-----------------------------------------------------------------------------------
-" hex color preview
-lua << EOF
-require("colorizer").setup()
-EOF
-"-----------------------------------------------------------------------------------
-
-"-----------------------------------------------------------------------------------
 " hex editor
 lua << EOF
 require 'hex'.setup()
 EOF
 "-----------------------------------------------------------------------------------
 
-"-----------------------------------------------------------------------------------
-" lmao
-" let g:vimsence_small_text = 'NeoVim'
-" let g:vimsence_small_image = 'neovim'
-
-let g:presence_auto_update = 1
-" let g:presence_log_level = 'debug'
-let g:presence_blacklist = []
-"-----------------------------------------------------------------------------------
-
-"-----------------------------------------------------------------------------------
-" markdown preview
-
-" set default theme (dark or light)
-" By default the theme is define according to the preferences of the system
-let g:mkdp_theme = 'dark'
-"-----------------------------------------------------------------------------------
-
-"-----------------------------------------------------------------------------------
-" autocomplete settings
-" TextEdit might fail if hidden is not set.
-set hidden
-
-" Give more space for displaying messages.
-" set cmdheight=2
-set cmdheight=1
-
-" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
-" delays and poor user experience.
-set updatetime=300
-
-" Don't pass messages to |ins-completion-menu|.
-set shortmess+=c
-
-" Always show the signcolumn, otherwise it would shift the text each time
-" diagnostics appear/become resolved.
-" if has("nvim-0.5.0") || has("patch-8.1.1564")
-"   " Recently vim can merge signcolumn and number column into one
-"   set signcolumn=number
-" else
-"   set signcolumn=yes
-" endif
-
-" Use tab for trigger completion with characters ahead and navigate.
-" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-" other plugin before putting this into your config.
-function! s:check_back_space() abort
-    let col = col('.') - 1
-    return !col || getline('.')[col - 1]  =~ '\s'
-endfunction
-
-" use <CR> to trigger completion
-inoremap <silent><expr> <CR> coc#pum#visible() ? coc#_select_confirm()
-                            \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
-
-
-" Insert <tab> when previous text is space, refresh completion if not.
-inoremap <silent><expr> <TAB>
-    \ coc#pum#visible() ? coc#pum#next(1):
-    \ <SID>check_back_space() ? "\<Tab>" :
-    \ coc#refresh()
-inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
-
-
-" GoTo code navigation.
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-nmap <silent> gb <C-o>
-
-nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  elseif (coc#rpc#ready())
-    call CocActionAsync('doHover')
-  else
-    execute '!' . &keywordprg . " " . expand('<cword>')
-  endif
-endfunction
-
-" Highlight the symbol and its references when holding the cursor.
-autocmd CursorHold * silent call CocActionAsync('highlight')
-
-augroup mygroup
-  autocmd!
-  " Setup formatexpr specified filetype(s).
-  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
-  " Update signature help on jump placeholder.
-  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-augroup end
-
-" Add `:Format` command to format current buffer.
-command! -nargs=0 Format :call CocActionAsync('format')
-
-" Add `:Fold` command to fold current buffer.
-command! -nargs=? Fold :call     CocAction('fold', <f-args>)
-
-" Add `:OR` command for organize imports of the current buffer.
-command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
-
-" Add (Neo)Vim's native statusline support.
-" NOTE: Please see `:h coc-status` for integrations with external plugins that
-" provide custom statusline: lightline.vim, vim-airline.
-" set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
-
-let g:coc_global_extensions = [
-    \ "coc-json",
-    \ "coc-clangd",
-    \ "coc-python",
-    \ "coc-sh",
-    \ "coc-cmake"
-\]
-
-"-----------------------------------------------------------------------------------
+" "-----------------------------------------------------------------------------------
 
 autocmd BufWinEnter,BufNewFile,BufRead,VimEnter,FileType,OptionSet * set formatoptions=jql
 autocmd BufWinEnter,BufNewFile,BufRead,VimEnter,FileType,OptionSet * setlocal formatoptions=jql
 " autocmd BufReadPost,OptionSet * silent :GuessIndent
 
 autocmd BufRead,BufNewFile project/*.c setlocal formatoptions-=cro
-
-autocmd FileType markdown set spell
 
 autocmd VimLeave,VimLeavePre * :set guicursor=n:ver100-iCursor
 
@@ -892,6 +611,3 @@ autocmd BufWinEnter,WinEnter term://* startinsert
 autocmd TermOpen * setlocal nonumber norelativenumber
 autocmd TermOpen * if bufwinnr('') > 0 | setlocal nobuflisted | endif
 autocmd TermClose * setlocal number | :Bclose!
-" autocmd BufLeave term://* stopinsert
-
-autocmd BufWritePost * :FixRainbow

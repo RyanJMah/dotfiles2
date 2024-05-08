@@ -64,7 +64,11 @@ class Platform(ABC):
 
 
     def install_nvim_conf(self):
+        plugin_dir = f"{HOME}/.local/share/nvim/site/pack/vendor/start"
+
         cmd = f"""
+        set -e
+
         mkdir -p {HOME}/.config/nvim
         
         ln -sf {DOTFILES_COMMON_DIR}/nvim_conf/.vimrc   {HOME}/.vimrc
@@ -72,9 +76,51 @@ class Platform(ABC):
 
         ln -sf {DOTFILES_COMMON_DIR}/nvim_conf/.terminal-vimrc.vim {HOME}/.terminal-vimrc.vim
         ln -sf {DOTFILES_COMMON_DIR}/nvim_conf/.vscode-vimrc.vim   {HOME}/.vscode-vimrc.vim
-        """
 
+        mkdir -p {plugin_dir}
+        """
         self.exec_bash(cmd)
+
+        # install plugins
+        with open(os.path.join(DOTFILES_COMMON_DIR, "nvim_conf", "plugins.txt"), "r") as f:
+            plugins = f.read().strip().splitlines()
+
+        for plugin in plugins:
+            plugin_name = plugin.split("/")[-1]
+
+            cmd = f"""
+            git clone https://github.com/{plugin}.git tmp
+            mv tmp {plugin_dir}/{plugin_name}
+            """
+            self.exec_bash(cmd)
+
+        # Install plugin dependencies
+        cmd = f"""
+        set -e
+
+        # ripgrep
+        curl -LO https://github.com/BurntSushi/ripgrep/releases/download/14.1.0/ripgrep-14.1.0-x86_64-unknown-linux-musl.tar.gz
+        tar -zxf ripgrep-*.tar.gz
+        rm ripgrep-*.tar.gz
+
+        mkdir -p {HOME}/.local/bin/ripgrep
+        mv ripgrep-* {HOME}/.local/bin/ripgrep
+        ln -sf {HOME}/.local/bin/ripgrep/rg {HOME}/.local/bin/rg
+
+        # xxd (build from source)
+        mkdir tmp
+        cd tmp
+        curl -LO https://raw.githubusercontent.com/vim/vim/master/src/xxd/Makefile
+        curl -LO https://raw.githubusercontent.com/vim/vim/master/src/xxd/xxd.c
+        make
+        mv xxd {HOME}/.local/bin
+
+        cd ..
+        rm -rf tmp
+        """
+        self.exec_bash(cmd)
+
+
 
     def install_vscode_conf(self):
         vscode_dir = self.get_code_conf_dir()
