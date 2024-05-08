@@ -10,7 +10,6 @@ RUN apt install -y  \
     python3-pip     \
     curl            \
     libssl-dev      \
-    libutf8proc-dev \
     pkg-config      \
     bison
 
@@ -29,6 +28,8 @@ ADD . /home/testuser/dotfiles2
 RUN chown -R testuser:testuser /home/testuser
 
 USER testuser
+
+SHELL ["/bin/bash", "-c"]
 
 # Do nothing forever
 CMD ["bash", "-c", "while true; do sleep 30; done;"]

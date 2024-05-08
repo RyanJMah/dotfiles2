@@ -66,6 +66,10 @@ def install_all(os_type, remote, user, password, priv_key):
         platform.install_tmux()
 
 
+    if prompt_user("Install Tmux configuration?"):
+        platform.install_tmux_conf()
+
+
     if prompt_user("Install VSCode configuration?"):
         platform.install_vscode_conf()
 

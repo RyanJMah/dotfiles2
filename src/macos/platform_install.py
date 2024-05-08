@@ -1,5 +1,6 @@
 import os
 import sys
+from typing import Dict
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 SRC_DIR  = os.path.dirname(THIS_DIR)
@@ -27,6 +28,9 @@ class MacOS(Platform):
     def get_code_cmd(self) -> str:
         return r"/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
 
+    def platform_tmux_configure_flags(self) -> Dict[str, str]:
+        return {}
+    
     def platform_specific_install(self):
         pass
 

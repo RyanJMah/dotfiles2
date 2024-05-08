@@ -1,6 +1,7 @@
 import os
 import subprocess
 from abc import ABC, abstractmethod
+from typing import Dict
 
 from app_paths import Paths
 from shell_wrapper import Shell
@@ -34,6 +35,10 @@ class Platform(ABC):
     @abstractmethod
     def get_ripgrep_download_url(self) -> str:
         pass
+
+    # Can override
+    def platform_tmux_configure_flags(self) -> Dict[str, str]:
+        return {}
     ##############################################################################
 
 
@@ -137,9 +142,8 @@ class Platform(ABC):
         self.exec_bash(cmd)
 
     def install_vscode_extensions(self):
-        extensions_txt = os.path.join(self.paths.DOTFILES_COMMON_DIR, "vscode_extensions.txt")
+        extensions_txt = os.path.join(self.paths.DOTFILES_COMMON_DIR, "vscode_conf", "vscode_extensions.txt")
 
-        # code = r"/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
         code = self.get_code_cmd()
 
         with open(extensions_txt, "r") as f:
@@ -158,13 +162,23 @@ class Platform(ABC):
         """
         self.exec_bash(cmd)
 
+
+
     def install_tmux(self):
-        install_dir = os.path.join(self.paths.HOME, ".local", "tmux")
+        install_dir = os.path.join(self.paths.HOME, ".local")
+
+        configure_flags = self.platform_tmux_configure_flags()
+
+        libevent_flags = configure_flags.get("libevent", "")
+        ncurses_flags  = configure_flags.get("ncurses", "")
+        tmux_flags     = configure_flags.get("tmux", "")
 
         cmd = f"""
         set -e
 
-        mkdir -p {install_dir}
+        INSTALL_DIR={install_dir}
+
+        mkdir -p $INSTALL_DIR
 
         # install libevent
 
@@ -175,7 +189,7 @@ class Platform(ABC):
 
         cd libevent-*/
 
-        ./configure --prefix={install_dir} --enable-shared
+        ./configure --prefix=$INSTALL_DIR {libevent_flags}
         make -j && make install
 
         cd ..
@@ -187,7 +201,7 @@ class Platform(ABC):
         rm ncurses-6.3.tar.gz
 
         cd ncurses-*/
-        ./configure --prefix={install_dir} --with-shared --with-termlib --enable-pc-files --with-pkg-config-libdir={install_dir}/lib/pkgconfig
+        ./configure --prefix=$INSTALL_DIR --with-termlib --enable-pc-files --with-pkg-config-libdir=$INSTALL_DIR/lib/pkgconfig {ncurses_flags}
         make -j && make install
 
         cd ..
@@ -199,34 +213,17 @@ class Platform(ABC):
         rm tmux-3.4.tar.gz
 
         cd tmux-*/
-        PKG_CONFIG_PATH={install_dir}/lib/pkgconfig ./configure --prefix={install_dir} --enable-utf8proc
+        PKG_CONFIG_PATH=$INSTALL_DIR/lib/pkgconfig ./configure --prefix=$INSTALL_DIR {tmux_flags}
         make -j && make install
 
         rm -rf libevent-* ncurses-* tmux-*
         """
         self.exec_bash(cmd)
 
-        # Alias to set LD_LIBRARY_PATH before running tmux
-        alias_script = f"""
-        #!/usr/bin/env bash
 
-        LD_LIBRARY_PATH={install_dir}/lib:${{LD_LIBRARY_PATH}} ${{HOME}}/.local/tmux/bin/tmux "$@"
-
-        """
-
+    def install_tmux_conf(self):
         cmd = f"""
-        set -e
-
-        mkdir -p {self.paths.HOME}/.local/bin
-        cd {self.paths.HOME}/.local/bin
-
-        touch tmux
-        chmod +x tmux
-
-        echo '{alias_script}' > tmux
-
-        # Test the alias
-        {self.paths.HOME}/.local/bin/tmux -V
+        ln -sf {self.paths.DOTFILES_COMMON_DIR}/tmux_conf/.tmux.conf {self.paths.HOME}/.tmux.conf
         """
         self.exec_bash(cmd)
 
