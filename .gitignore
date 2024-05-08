@@ -4,9 +4,6 @@ __pycache__
 neovim
 
 Build
-
-# ALL instance of VM.bundle
-**/VM.bundle
-
+VM.bundle
 
 .mypy_cache

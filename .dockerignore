@@ -1,1 +1,10 @@
-.gitignore
+.DS_Store
+__pycache__
+
+neovim
+
+Build
+
+test_environments
+
+.mypy_cache
