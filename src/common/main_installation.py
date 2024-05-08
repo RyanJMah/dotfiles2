@@ -1,8 +1,8 @@
 import os
 import sys
 
-from common.app_paths import SRC_DIR
-from common.app_paths import LocalPaths, RemotePaths
+from app_paths import SRC_DIR
+from app_paths import LocalPaths, RemotePaths
 sys.path.append(SRC_DIR)
 
 from shell_wrapper import LocalShell, RemoteShell
@@ -37,9 +37,9 @@ def install_all(os_type, remote, user, password, priv_key):
 
 
     if os_type == "macos":
-        platform = MacOS(shell)
+        platform = MacOS(shell, paths)
     else:
-        platform = Linux(shell)
+        platform = Linux(shell, paths)
 
 
     if prompt_user("Install shell configuration?"):

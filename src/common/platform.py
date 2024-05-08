@@ -210,7 +210,7 @@ class Platform(ABC):
         alias_script = f"""
         #!/usr/bin/env bash
 
-        LD_LIBRARY_PATH={install_dir}/lib:${{LD_LIBRARY_PATH}} ${{self.paths.HOME}}/.local/tmux/bin/tmux "$@"
+        LD_LIBRARY_PATH={install_dir}/lib:${{LD_LIBRARY_PATH}} ${{HOME}}/.local/tmux/bin/tmux "$@"
 
         """
 
