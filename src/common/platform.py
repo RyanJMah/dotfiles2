@@ -21,6 +21,10 @@ class Platform(ABC):
     @abstractmethod
     def get_code_conf_dir(self) -> str:
         pass
+
+    @abstractmethod
+    def get_ripgrep_download_url(self) -> str:
+        pass
     ##############################################################################
 
 
@@ -99,7 +103,7 @@ class Platform(ABC):
         set -e
 
         # ripgrep
-        curl -LO https://github.com/BurntSushi/ripgrep/releases/download/14.1.0/ripgrep-14.1.0-x86_64-unknown-linux-musl.tar.gz
+        curl -LO {self.get_ripgrep_download_url()}
         tar -zxf ripgrep-*.tar.gz
         rm ripgrep-*.tar.gz
 

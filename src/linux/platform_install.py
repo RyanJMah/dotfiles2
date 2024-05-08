@@ -29,6 +29,9 @@ class Linux(Platform):
     def get_code_conf_dir(self) -> str:
         return f"{HOME}/.config/Code/User"
 
+    def get_ripgrep_download_url(self) -> str:
+        return "https://github.com/BurntSushi/ripgrep/releases/download/14.1.0/ripgrep-14.1.0-x86_64-unknown-linux-musl.tar.gz"
+
     def platform_specific_install(self):
         print("running platform specific install for linux...")
 
