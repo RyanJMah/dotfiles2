@@ -28,6 +28,9 @@ class MacOS(Platform):
     def get_code_cmd(self) -> str:
         return r"/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
 
+    def get_ripgrep_download_url(self) -> str:
+        return "https://github.com/BurntSushi/ripgrep/releases/download/14.1.0/ripgrep-14.1.0-aarch64-apple-darwin.tar.gz"
+
     def platform_tmux_configure_flags(self) -> Dict[str, str]:
         return {
             "tmux": "--enable-utf8proc"
