@@ -38,7 +38,7 @@ pip3 install -r requirements.txt
 
 ### MacOS
 
-All dependencies can be installed by `xcode-select --install`.
+All dependencies should be able to be installed by `xcode-select --install`.
 
 ## Installation
 
