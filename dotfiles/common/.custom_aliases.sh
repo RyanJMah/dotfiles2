@@ -22,6 +22,7 @@ alias vim="nvim"
 alias clear="clear && printf '\e[3J'"
 alias tmux="tmux -2u "
 alias ls="ls --color=always"
+alias l="ls -la"
 
 export PATH=$PATH:$HOME/.local/bin
 export PATH=$PATH:$HOME/.local/nvim/bin
