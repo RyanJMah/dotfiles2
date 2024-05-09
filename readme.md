@@ -25,8 +25,6 @@ have to build it from source.
 As such, if you want the tmux installation you will need some more dependencies - notably,
 the following:
 
-* `libssl-dev`
-* `pkg-config`
 * `bison`
 
 
