@@ -37,6 +37,21 @@ class MacOS(Platform):
             "ncurses": "--with-shared",
             "tmux": "--enable-utf8proc"
         }
+
+    def install_tmux(self):
+        # Install utf8proc first
+        cmd = f"""
+        set -e
+        curl -LO https://github.com/JuliaStrings/utf8proc/releases/download/v2.9.0/utf8proc-2.9.0.tar.gz
+        tar -xzf utf8proc-*.tar.gz
+
+        cd utf8proc-*
+
+        make prefix={self.paths.HOME}/.local install
+        """
+        self.exec_bash(cmd)
+
+        # super().install_tmux()
     
     def platform_specific_install(self):
         pass
