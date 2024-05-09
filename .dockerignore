@@ -5,6 +5,6 @@ neovim
 
 Build
 
-test_environments
+test_environments/macos
 
 .mypy_cache

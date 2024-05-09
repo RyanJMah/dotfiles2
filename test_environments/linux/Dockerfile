@@ -21,7 +21,17 @@ RUN adduser testuser sudo
 # Set password for the user
 RUN echo 'testuser:pass' | chpasswd
 
-ADD . /home/testuser/dotfiles2
+# Copy files
+RUN mkdir /home/testuser/dotfiles2
+
+COPY dotfiles /home/testuser/dotfiles2/dotfiles
+COPY src /home/testuser/dotfiles2/src
+
+COPY install.py                             \
+     quick_install.sh                       \
+     requirements.txt                       \
+     test_environments/linux/ssh_server.sh  \
+     /home/testuser/dotfiles2/
 
 RUN chown -R testuser:testuser /home/testuser
 
@@ -30,6 +40,7 @@ RUN chsh -s /bin/bash testuser
 
 USER testuser
 
+EXPOSE 22
 
 # Do nothing forever
 CMD ["bash", "-c", "while true; do sleep 30; done;"]

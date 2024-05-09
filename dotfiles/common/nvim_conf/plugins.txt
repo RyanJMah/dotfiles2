@@ -8,7 +8,6 @@ tpope/vim-fugitive
 RaafatTurki/hex.nvim
 lukas-reineke/indent-blankline.nvim
 tpope/vim-commentary
-karb94/neoscroll.nvim
 nvim-telescope/telescope.nvim
 nvim-lua/plenary.nvim
 simeji/winresizer

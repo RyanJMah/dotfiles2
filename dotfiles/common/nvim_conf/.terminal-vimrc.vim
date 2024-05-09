@@ -157,18 +157,18 @@ nnoremap <silent> <Leader>bd :Bclose<CR>
 "-----------------------------------------------------------------------------------
 " KEYMAPINGS
 
-" SCROLLING
-lua << EOF
-require("neoscroll").setup({
-    mappings = {'<C-u>', '<C-d>'}
-})
+" " SCROLLING
+" lua << EOF
+" require("neoscroll").setup({
+"     mappings = {'<C-u>', '<C-d>'}
+" })
 
-local t = {}
-t['<C-u>'] = {"scroll", {"-0.35", "false", "55"}}
-t['<C-d>'] = {"scroll", {"0.35",  "false", "55"}}
+" local t = {}
+" t['<C-u>'] = {"scroll", {"-0.35", "false", "55"}}
+" t['<C-d>'] = {"scroll", {"0.35",  "false", "55"}}
 
-require("neoscroll.config").set_mappings(t)
-EOF
+" require("neoscroll.config").set_mappings(t)
+" EOF
 
 " Ctrl+S to save
 noremap  <silent> <C-S> :w<CR>

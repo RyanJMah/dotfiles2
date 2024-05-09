@@ -54,40 +54,12 @@ docker buildx build                         \
 # Clean up any existing containers
 clean_container
 
-# Extend the Docker image with SSH if requested
-if [[ $WITH_SSH -eq 1 ]]; then
-
-SSH_IMG_NAME="${IMAGE_NAME}-with-ssh"
-
-sudo docker buildx build                         \
-    -f test_environments/linux/withSSH.Dockerfile   \
-    --build-arg TEST_ENV_BASE_IMG=$IMAGE_NAME       \
-    --pull=false                               \
-    --platform linux/amd64                  \
-    --load                                  \
-    -t $IMAGE_NAME .
-
-# docker buildx build                                 \
-#     --build-arg TEST_ENV_BASE_IMG=$IMAGE_NAME       \
-#     -f test_environments/linux/withSSH.Dockerfile   \
-#     --platform linux/amd64                          \
-#     --load                                          \
-#     -t $SSH_IMAGE_NAME .
-
-# Use the SSH image
-CONTAINER_NAME="${CONTAINER_NAME}-with-ssh"
-IMAGE_NAME=$SSH_IMG_NAME
-
-# Clean up any existing containers
-clean_container
-
-fi
-
 
 docker run                  \
     -d                      \
     --platform linux/amd64  \
     --name $CONTAINER_NAME  \
+    -p 2222:22              \
     $IMAGE_NAME
 
 # Attach to the container's shell, start in the home directory
