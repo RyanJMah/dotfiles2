@@ -1,57 +1,58 @@
 #!/usr/bin/env bash
 
-get_tmux_option() {
-    local option=$1
-    local default_value="$2"
-    # shellcheck disable=SC2155
-    local option_value=$(tmux show-options -gqv "$option")
-    if [ -n "$option_value" ]; then
-        echo "$option_value"
-        return
-    fi
-    echo "$default_value"
-}
+# Color Pallette
+white='#fcfcfa'
+black='#24292e'
+gray='#2d2d2d'
+red='#ff668c'
+green='#7bd88f'
+yellow='#fed484'
+blue='#79b8ff'
+magenta='#ac82cb'
+cyan='#5ad4e6'
 
-bg=$(get_tmux_option "@minimal-tmux-bg" '#698DDA')
+# Handle left icon configuration
+left_icon="#I"
 
-status=$(get_tmux_option "@minimal-tmux-status" "top")
-justify=$(get_tmux_option "@minimal-tmux-justify" "centre")
-
-indicator_state=$(get_tmux_option "@minimal-tmux-indicator" true)
-right_state=$(get_tmux_option "@minimal-tmux-right" true)
-left_state=$(get_tmux_option "@minimal-tmux-left" true)
-
-if [ "$indicator_state" = true ]; then
-    indicator=$(get_tmux_option "@minimal-tmux-indicator-str" "  tmux  ")
-else
-    indicator=""
+# Handle left icon padding
+padding=""
+if [ "$show_left_icon_padding" -gt "0" ]; then
+padding="$(printf '%*s' $show_left_icon_padding)"
 fi
+left_icon="$left_icon$padding"
 
-window_status_format=$(get_tmux_option "@minimal-tmux-window-status-format" ' #I:#W ')
-status_right=$(get_tmux_option "@minimal-tmux-status-right" "#S")
-status_left=$(get_tmux_option "@minimal-tmux-status-left" "#[bg=default,fg=default,bold]#{?client_prefix,,${indicator}}#[bg=${bg},fg=black,bold]#{?client_prefix,${indicator},}#[bg=default,fg=default,bold]")
-expanded_icon=$(get_tmux_option "@minimal-tmux-expanded-icon" ' 󰊓 ')
-show_expanded_icon_for_all_tabs=$(get_tmux_option "@minimal-tmux-show-expanded-icon-for-all-tabs" false)
+# set length
+tmux set-option -g status-left-length 100
+tmux set-option -g status-right-length 100
 
-status_right_extra="$status_right$(get_tmux_option "@minimal-tmux-status-right-extra" '')"
-status_left_extra="$status_left$(get_tmux_option "@minimal-tmux-status-left-extra" '')"
+# pane border styling
+tmux set-option -g pane-active-border-style "fg=${red}"
+tmux set-option -g pane-border-style "fg=${gray}"
 
-if [ "$right_state" = false ]; then
-    status_right_extra=""
-fi
+# message styling
+tmux set-option -g message-style "bg=${gray},fg=${white}"
 
-if [ "$left_state" = false ]; then
-    status_left_extra=""
-fi
+# status bar
+tmux set-option -g status-style "bg=${gray},fg=${white}"
 
-tmux set-option -g status-position "${status}"
-tmux set-option -g status-style bg=default,fg=default
-tmux set-option -g status-justify "${justify}"
-tmux set-option -g status-left "${status_left_extra}"
-tmux set-option -g status-right "${status_right_extra}"
-tmux set-option -g window-status-format "${window_status_format}"
-tmux set-option -g window-status-current-format "#[bg=${bg},fg=#000000] ${window_status_format}#{?window_zoomed_flag,${expanded_icon}, }"
+# Status left
+tmux set-option -g status-left "#[fg=${red},bg=${black}]#{?client_prefix,#[fg=${yellow}],}#[bg=${red},fg=${black},bold]#{?client_prefix,#[bg=${yellow}],} ${left_icon} #[fg=${red},bg=${gray}]#{?client_prefix,#[fg=${yellow}],}${left_sep}"
+powerbg=${gray}
 
-if [ "$show_expanded_icon_for_all_tabs" = true ]; then
-    tmux set-option -g window-status-format " ${window_status_format}#{?window_zoomed_flag,${expanded_icon}, }"
-fi
+# Status right
+tmux set-option -g status-right ""
+
+
+tmux set-option -ga status-right "#[fg=${!colors[0]},bg=${powerbg},nobold,nounderscore,noitalics]${right_sep}#[fg=${!colors[1]},bg=${!colors[0]}] $script "
+powerbg=${!colors[0]}
+
+tmux set-option -ga status-right "#[fg=${green},bg=${yellow}]${right_sep}#[bg=${green},fg=${black},bold] #h #[bg=${black},fg=${green}]"
+tmux set-window-option -g window-status-current-format "#[bg=${white},fg=${gray}]${left_sep} #[fg=${black},bg=${white}]#I #W${current_flags} #[bg=${gray},fg=${white}]${left_sep}"
+
+tmux set-window-option -g window-status-format "#[bg=${gray},fg=${gray}]${left_sep} #[fg=${white},bg=${gray}]#I #W${flags} #[bg=${gray},fg=${gray}]${left_sep}"
+tmux set-window-option -g window-status-activity-style "bold"
+tmux set-window-option -g window-status-bell-style "bold"
+tmux set-window-option -g window-status-separator ""
+
+# Set to top
+tmux set-option -g status-position top

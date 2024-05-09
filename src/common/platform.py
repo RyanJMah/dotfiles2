@@ -252,6 +252,7 @@ class Platform(ABC):
         cmd = f"""
         ln -sf {self.paths.DOTFILES_COMMON_DIR}/tmux_conf/.tmux.conf {self.paths.HOME}/.tmux.conf
         ln -sf {self.paths.DOTFILES_COMMON_DIR}/tmux_conf/.tmux_theme.sh {self.paths.HOME}/.tmux_theme.sh
+        ln -sf {self.paths.DOTFILES_COMMON_DIR}/tmux_conf/.tmux_sensible.sh {self.paths.HOME}/.tmux_sensible.sh
         """
         self.exec_bash(cmd)
     ##############################################################################

@@ -9,6 +9,7 @@ inoremap <silent> <C-S> <C-O>:w<CR>
 " Unmap some stuff cus they're annoying
 inoremap <C-A> <NOP>
 nnoremap <s> <NOP>
+nnoremap q <NOP>
 
 " Ctrl+Z to undo
 nnoremap <C-Z> u
