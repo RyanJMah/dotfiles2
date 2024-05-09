@@ -51,7 +51,7 @@ class MacOS(Platform):
         """
         self.exec_bash(cmd)
 
-        # super().install_tmux()
+        super().install_tmux()
     
     def platform_specific_install(self):
         pass
