@@ -88,7 +88,7 @@ class LocalShell(Shell):
             cd {repo_path}
             git fetch && git reset --hard origin/$(git symbolic-ref --short HEAD)                
         else
-            git clone {url}
+            git clone {url} {repo_path}
         fi
         """
         self.run(cmd)
