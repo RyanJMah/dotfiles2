@@ -27,9 +27,9 @@ def prompt_user_choice(msg: str, choices: list) -> str:
         print(f"Invalid choice: {user_input}")
 
 
-def install_all(os_type, remote, user, password, priv_key):
+def install_all(os_type, remote, user, password, priv_key, port):
     if remote is not None:
-        shell = RemoteShell(remote, user, password, priv_key)
+        shell = RemoteShell(remote, user, port, password, priv_key)
         paths = RemotePaths()
     else:
         shell = LocalShell()

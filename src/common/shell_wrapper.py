@@ -5,6 +5,7 @@ import subprocess
 from enum import Enum
 from typing import Optional
 from abc import ABC, abstractmethod
+from tempfile import TemporaryDirectory
 
 class Shell(ABC):
     @abstractmethod
@@ -12,7 +13,7 @@ class Shell(ABC):
         pass
 
     @abstractmethod
-    def install(self, url: str, dst_dir: Optional[str] = None):
+    def install(self, url: str, dst_dir: Optional[str] = None) -> str:
         pass
 
 
@@ -25,11 +26,21 @@ class LocalShell(Shell):
         except subprocess.CalledProcessError as e:
             print(f"ERROR: {e}")
 
-    def install(self, url: str, dst_dir: Optional[str] = None):
-        self.run(f"curl -LO {url}")
+    def install(self, url: str, dst_dir: Optional[str] = None) -> str:
+        filename = url.split("/")[-1]
 
         if dst_dir is not None:
-            self.run(f"mv {os.path.basename(url)} {dst_dir}")
+            self.run(f"curl -LO {url}")
+            return filename
+
+        else:
+            filepath = f"{dst_dir}/{filename}"
+            self.run(f"curl -LO {url} -o {filepath}")
+
+            return filepath
+
+
+
 
 
 class RemoteShell_AuthType(Enum):
@@ -49,10 +60,16 @@ class RemoteShell(ABC):
         conn: fabric.Connection
 
         if self.auth_type == RemoteShell_AuthType.PASSWORD:
-            conn = fabric.Connection(self.remote, user=self.user, connect_kwargs={"password": self.password})
+            conn = fabric.Connection( self.remote,
+                                      user=self.user,
+                                      port=self.port,
+                                      connect_kwargs={"password": self.password} )
         
         elif self.auth_type == RemoteShell_AuthType.PRIVATE_KEY:
-            conn = fabric.Connection(self.remote, user=self.user, connect_kwargs={"key_filename": self.priv_key_path})
+            conn = fabric.Connection( self.remote,
+                                      user=self.user,
+                                      port=self.port,
+                                      connect_kwargs={"key_filename": self.priv_key_path} )
         
         else:
             raise Exception("Invalid authentication type")
@@ -70,11 +87,12 @@ class RemoteShell(ABC):
 
     def _exit_handler(self):
         self.conn.close()
-        os.remove(self._tmp_folder, missing_ok=True)
+
 
     def __init__( self,
                   remote: str,
                   user: str,
+                  port: int = 22,
                   password: Optional[str] = None,
                   priv_key: Optional[str] = None ):
 
@@ -84,6 +102,7 @@ class RemoteShell(ABC):
         self.user = user
         self.password = password
         self.priv_key_path = priv_key
+        self.port = port
 
         self.auth_type: RemoteShell_AuthType
 
@@ -105,23 +124,30 @@ class RemoteShell(ABC):
         # Establish connection
         self._conn = self._log_in()
 
-        self._tmp_folder = "/tmp/remote_shell_tmp"
-
-        os.remove(self._tmp_folder, missing_ok=True)
-        os.makedirs(self._tmp_folder, exist_ok=True)
-
 
     def run(self, cmd_str: str):
         self._run(self._conn, cmd_str)
 
-    def install(self, url: str, dst_dir: Optional[str] = None):
+    def install(self, url: str, dst_dir: Optional[str] = None) -> str:
         """
         curl the file locally then sftp it
         to the remote machine
         """
-        self.local_shell.install(url)
+        with TemporaryDirectory() as tmp_dir:
+            # Download file locally
+            filepath = self.local_shell.install(url, tmp_dir)
 
-        filename = url.split("/")[-1]
+            # SFTP file to remote machine
+            self._conn.put(filepath)
 
-        self.conn.put(filename)
-        self.conn.run(f"mv {filename} {dst_dir}")
+            # Delete local file
+            os.remove(filepath)
+
+        # Move to destination directory if needed
+        if dst_dir is not None:
+            filename = filepath.split("/")[-1]
+            self._conn.run(f"mv {filename} {dst_dir}")
+
+        return filepath
+
+

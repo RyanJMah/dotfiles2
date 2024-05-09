@@ -8,12 +8,13 @@ from src.common.main_installation import install_all
 @click.option( "--user", default=None, type=str, help="Remote username" )
 @click.option( "--password", default=None, type=str, help="Remote password" )
 @click.option( "--priv-key", default=None, type=str, help="Remote ssh private key" )
-def main(os_type, remote, user, password, priv_key):
+@click.option( "--port", default=22, type=int, help="Remote port" )
+def main(os_type, remote, user, password, priv_key, port):
     print(f"OS Type: {os_type}...")
 
     assert( os_type in ["linux", "macos"] )
 
-    install_all(os_type, remote, user, password, priv_key)
+    install_all(os_type, remote, user, password, priv_key, port)
 
 if __name__ == '__main__':
     main()

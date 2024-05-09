@@ -1,7 +1,7 @@
 import os
 import subprocess
 from abc import ABC, abstractmethod
-from typing import Dict
+from typing import Dict, Optional
 
 from app_paths import Paths
 from shell_wrapper import Shell
@@ -14,6 +14,8 @@ class Platform(ABC):
     def exec_bash(self, cmd_str):
         self.shell.run(cmd_str)
 
+    def install_url(self, url: str, dst_dir: Optional[str] = None):
+        self.shell.install(url, dst_dir)
 
     ##############################################################################
     @abstractmethod
@@ -71,9 +73,10 @@ class Platform(ABC):
 
 
     def install_nvim(self):
+        self.install_url(self.get_nvim_download_url())
+
         cmd = f"""
-        curl -LO {self.get_nvim_download_url()}
-        # curl -LO https://github.com/neovim/neovim/releases/download/v0.9.5/nvim-linux64.tar.gz
+        # curl -LO {self.get_nvim_download_url()}
         tar -xzf nvim-*.tar.gz
 
         rm nvim-*.tar.gz
