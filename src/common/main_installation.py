@@ -31,6 +31,14 @@ def install_all(os_type, remote, user, password, priv_key, port):
     if remote is not None:
         shell = RemoteShell(remote, user, port, password, priv_key)
         paths = RemotePaths()
+
+        # Push repo to remote
+        this_dir = os.path.dirname(os.path.abspath(__file__))
+        src_dir  = os.path.dirname(this_dir)
+        repo_dir = os.path.dirname(src_dir)
+
+        shell.put(repo_dir)
+
     else:
         shell = LocalShell()
         paths = LocalPaths()

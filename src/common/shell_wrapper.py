@@ -10,10 +10,20 @@ from tempfile import TemporaryDirectory
 class Shell(ABC):
     @abstractmethod
     def run(self, cmd_str: str):
+        """
+        Run a shell command
+        """
         pass
 
     @abstractmethod
     def install(self, url: str, dst_dir: Optional[str] = None) -> str:
+        """
+        Install a file from a URL
+
+        If dst_dir is None, the file is installed in the current directory
+
+        If dst_dir doesn't exist, it is created
+        """
         pass
 
 
@@ -34,12 +44,12 @@ class LocalShell(Shell):
             return filename
 
         else:
+            os.makedirs(dst_dir, exist_ok=True)
+
             filepath = f"{dst_dir}/{filename}"
             self.run(f"curl -LO {url} -o {filepath}")
 
             return filepath
-
-
 
 
 
@@ -89,6 +99,7 @@ class RemoteShell(ABC):
         self.conn.close()
 
 
+
     def __init__( self,
                   remote: str,
                   user: str,
@@ -124,9 +135,85 @@ class RemoteShell(ABC):
         # Establish connection
         self._conn = self._log_in()
 
+    def _put_directory(self, local_dir: str, remote_dir: Optional[str] = None):
+        ignore_dirs = [
+            ".git",
+            "test_environments",
+            "__pycache__"
+        ]
+
+        if remote_dir is not None:
+            # Create the remote directory if it doesn't exist
+            self._conn.run(f'mkdir -p {remote_dir}')
+        else:
+            top_dir = os.path.basename(local_dir)
+            self._conn.run(f'mkdir -p {top_dir}')
+
+            remote_dir = top_dir
+
+        # Walk through the directory tree
+        for dirpath, dirnames, filenames in os.walk(local_dir):
+            # Modify dirnames in-place to skip ignored directories
+            dirnames[:] = [d for d in dirnames if d not in ignore_dirs]
+            
+            # Compute remote directory path
+            relative_path   = os.path.relpath(dirpath, local_dir)
+            remote_dir_path = os.path.join(remote_dir, relative_path)
+
+            self._conn.run(f'mkdir -p {remote_dir_path}')
+
+            # Upload each file in this directory
+            for filename in filenames:
+                local_file = os.path.join(dirpath, filename)
+                remote_file_path = os.path.join(remote_dir_path, filename)
+
+                self._conn.put(local_file, remote_file_path)
+
+        # if remote_dir is not None:
+        #     # Create the remote directory if it doesn't exist
+        #     self._conn.run(f'mkdir -p {remote_dir}')
+        # else:
+        #     top_dir = os.path.basename(local_dir)
+        #     self._conn.run(f'mkdir -p {top_dir}')
+
+        #     remote_dir = top_dir
+        
+        # for root, dirs, files in os.walk(local_dir):
+        #     # Determine the path on the remote server
+        #     relative_path = os.path.relpath(root, local_dir)
+        #     remote_dir_path = os.path.join(remote_dir, relative_path)
+            
+        #     # Create directories
+        #     for dir_name in dirs:
+        #         if dir_name in ignore_list:
+        #             dirs.remove(dir_name)
+        #             continue
+
+        #         remote_subdir = os.path.join(remote_dir_path, dir_name)
+        #         self._conn.run(f'mkdir -p {remote_subdir}')
+            
+        #     # Upload files
+        #     for file in files:
+        #         local_file       = os.path.join(root, file)
+        #         remote_file_path = os.path.join(remote_dir_path, file)
+
+        #         self._conn.put(local_file, remote_file_path)
+        #         print("Uploaded", local_file, "to", remote_file_path)
+
+
 
     def run(self, cmd_str: str):
         self._run(self._conn, cmd_str)
+
+
+    def put(self, local_path: str, remote_path: Optional[str] = None):
+        if os.path.isdir(local_path):
+            self._put_directory(local_path, remote_path)
+        else:
+            self._conn.put(local=local_path, remote=remote_path)
+
+        # self._conn.put(local=local_path, remote=remote_path)
+
 
     def install(self, url: str, dst_dir: Optional[str] = None) -> str:
         """
@@ -137,17 +224,11 @@ class RemoteShell(ABC):
             # Download file locally
             filepath = self.local_shell.install(url, tmp_dir)
 
-            # SFTP file to remote machine
-            self._conn.put(filepath)
+            if dst_dir is not None:
+                self._conn.run(f"mkdir -p {dst_dir}")
+
+            self.put(filepath, dst_dir)
 
             # Delete local file
             os.remove(filepath)
-
-        # Move to destination directory if needed
-        if dst_dir is not None:
-            filename = filepath.split("/")[-1]
-            self._conn.run(f"mv {filename} {dst_dir}")
-
-        return filepath
-
 

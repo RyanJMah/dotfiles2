@@ -73,10 +73,9 @@ class Platform(ABC):
 
 
     def install_nvim(self):
-        self.install_url(self.get_nvim_download_url())
+        self.install_url( self.get_nvim_download_url() )
 
         cmd = f"""
-        # curl -LO {self.get_nvim_download_url()}
         tar -xzf nvim-*.tar.gz
 
         rm nvim-*.tar.gz
@@ -119,11 +118,14 @@ class Platform(ABC):
             self.exec_bash(cmd)
 
         # Install plugin dependencies
+        self.install_url( self.get_ripgrep_download_url() )
+        self.install_url( "https://raw.githubusercontent.com/vim/vim/master/src/xxd/xxd.c",    "tmp" )
+        self.install_url( "https://raw.githubusercontent.com/vim/vim/master/src/xxd/Makefile", "tmp" )
+
         cmd = f"""
         set -e
 
         # ripgrep
-        curl -LO {self.get_ripgrep_download_url()}
         tar -zxf ripgrep-*.tar.gz
         rm ripgrep-*.tar.gz
 
@@ -132,10 +134,7 @@ class Platform(ABC):
         ln -sf {self.paths.HOME}/.local/bin/ripgrep/rg {self.paths.HOME}/.local/bin/rg
 
         # xxd (build from source)
-        mkdir tmp
         cd tmp
-        curl -LO https://raw.githubusercontent.com/vim/vim/master/src/xxd/Makefile
-        curl -LO https://raw.githubusercontent.com/vim/vim/master/src/xxd/xxd.c
         make
         mv xxd {self.paths.HOME}/.local/bin
 
