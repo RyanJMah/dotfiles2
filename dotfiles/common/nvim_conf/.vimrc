@@ -1,5 +1,7 @@
 if exists("g:vscode")
 	source $HOME/.vscode-vimrc.vim
 else
-	source $HOME/.terminal-vimrc.vim
+    if has('nvim')
+        source $HOME/.terminal-vimrc.vim
+    endif
 endif

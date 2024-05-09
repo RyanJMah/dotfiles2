@@ -52,9 +52,16 @@ class Platform(ABC):
             print("ERROR: zsh is not installed, skipping...")
             return
 
-        self.install_url("https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh")
-        self.exec_bash("sh install.sh --unattended")
 
+        if not os.path.exists(f"{self.paths.HOME}/.oh-my-zsh"):
+            self.install_url("https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh")
+            self.exec_bash("sh install.sh --unattended")
+
+            os.remove("install.sh")
+
+            # Install plugins
+            self.shell.clone_git_repo("https://github.com/zsh-users/zsh-syntax-highlighting.git", f"{self.paths.HOME}/.oh-my-zsh/custom/plugins")
+ 
         cmd = f"""
         ln -sf {self.paths.DOTFILES_COMMON_DIR}/oh_my_zsh_conf/.zshrc {self.paths.HOME}/.zshrc
 
@@ -62,9 +69,6 @@ class Platform(ABC):
         """
         self.exec_bash(cmd)
 
-        # Install plugins
-        self.shell.clone_git_repo("https://github.com/zsh-users/zsh-syntax-highlighting.git", f"{self.paths.HOME}/.oh-my-zsh/custom/plugins")
-    
 
     def install_minimal_shell_conf(self):
         cmd = f"""
@@ -95,8 +99,12 @@ class Platform(ABC):
 
         mkdir -p {self.paths.HOME}/.local/nvim
 
-        cp -rT nvim-*/ {self.paths.HOME}/.local/nvim
-        rm -r nvim-*
+        if [ -d {self.paths.HOME}/.local/nvim ];
+        then
+            rm -r {self.paths.HOME}/.local/nvim
+        fi
+
+        mv nvim-* {self.paths.HOME}/.local/nvim
         """
         self.exec_bash(cmd)
 
@@ -141,12 +149,14 @@ class Platform(ABC):
         tar -zxf ripgrep-*.tar.gz
         rm ripgrep-*.tar.gz
 
-        mkdir -p {self.paths.HOME}/.local/ripgrep
-        mkdir -p {self.paths.HOME}/.local/bin
+        if [ -d {self.paths.HOME}/.local/ripgrep ];
+        then
+            rm -r {self.paths.HOME}/.local/ripgrep
+        fi
 
-        cp -rT ripgrep-*/ {self.paths.HOME}/.local/ripgrep
-        rm -r ripgrep-*
-        
+        mv ripgrep-*/ {self.paths.HOME}/.local/ripgrep
+
+        mkdir -p {self.paths.HOME}/.local/bin
         ln -sf {self.paths.HOME}/.local/ripgrep/rg {self.paths.HOME}/.local/bin/rg
     
 

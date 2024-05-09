@@ -38,6 +38,9 @@ class MacOS(Platform):
         cd utf8proc-*
 
         make prefix={self.paths.HOME}/.local install
+
+        cd ..
+        rm -r utf8proc-*
         """
         self.exec_bash(cmd)
 

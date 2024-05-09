@@ -81,6 +81,18 @@ class LocalShell(Shell):
 
             return filepath
 
+    def _clone_repo_safe(self, url: str, repo_path: str):
+        cmd = f"""
+        if [ -d {repo_path} ];
+        then
+            cd {repo_path}
+            git fetch && git reset --hard origin/$(git symbolic-ref --short HEAD)                
+        else
+            git clone {url}
+        fi
+        """
+        self.run(cmd)
+
     def clone_git_repo( self,
                         url: str,
                         dst_dir: Optional[str] = None ):
@@ -88,7 +100,7 @@ class LocalShell(Shell):
         repo_name = url.split("/")[-1].replace(".git", "")
 
         if dst_dir is None:
-            self.run(f"git clone {url}")
+            self._clone_repo_safe(url, repo_name)
             return repo_name
         
         # dst_dir is specified
@@ -96,8 +108,7 @@ class LocalShell(Shell):
             os.makedirs(dst_dir, exist_ok=True)
             repo_path = os.path.join(dst_dir, repo_name)
 
-            self.run(f"git clone {url} {repo_path}")
-
+            self._clone_repo_safe(url, repo_path)
             return repo_path
 
     def _check_dependency(self, dependency: str) -> bool:
