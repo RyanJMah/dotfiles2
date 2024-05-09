@@ -36,6 +36,9 @@ COPY install.py                             \
 
 RUN chown -R testuser:testuser /home/testuser
 
+# Pre-install python packages
+RUN pip3 install -r /home/testuser/dotfiles2/requirements.txt
+
 # Set default shell of testuser to bash
 RUN chsh -s /bin/bash testuser
 
