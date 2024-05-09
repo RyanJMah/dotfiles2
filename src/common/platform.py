@@ -83,7 +83,7 @@ class Platform(ABC):
 
         mkdir -p {self.paths.HOME}/.local/nvim
 
-        cp -r nvim-*/ {self.paths.HOME}/.local/nvim
+        cp -rT nvim-*/ {self.paths.HOME}/.local/nvim
         rm -r nvim-*
         """
         self.exec_bash(cmd)
@@ -149,11 +149,12 @@ class Platform(ABC):
         rm ripgrep-*.tar.gz
 
         mkdir -p {self.paths.HOME}/.local/ripgrep
+        mkdir -p {self.paths.HOME}/.local/bin
 
-        cp -r ripgrep-*/ {self.paths.HOME}/.local/ripgrep
+        cp -rT ripgrep-*/ {self.paths.HOME}/.local/ripgrep
         rm -r ripgrep-*
-
-        ln -sf {self.paths.HOME}/.local/bin/ripgrep/rg {self.paths.HOME}/.local/bin/rg
+        
+        ln -sf {self.paths.HOME}/.local/ripgrep/rg {self.paths.HOME}/.local/bin/rg
     
 
         # xxd (build from source)
@@ -162,7 +163,7 @@ class Platform(ABC):
         mv xxd {self.paths.HOME}/.local/bin
 
         cd ..
-        rm -rf tmp
+        rm -r tmp
         """
         self.exec_bash(cmd)
 
@@ -181,7 +182,7 @@ class Platform(ABC):
         self.exec_bash(cmd)
 
     def install_vscode_extensions(self):
-        extensions_txt = os.path.join(self.paths.DOTFILES_COMMON_DIR, "vscode_conf", "vscode_extensions.txt")
+        extensions_txt = os.path.join(RESOURCES_DIR, "vscode_extensions.txt")
 
         code = self.get_code_cmd()
 
@@ -271,7 +272,4 @@ class Platform(ABC):
         ln -sf {self.paths.DOTFILES_COMMON_DIR}/tmux_conf/.tmux.conf {self.paths.HOME}/.tmux.conf
         """
         self.exec_bash(cmd)
-
-
-
     ##############################################################################

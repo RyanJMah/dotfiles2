@@ -6,10 +6,6 @@ or brew install.
 
 For the original iteration of my dotfiles, see [here](https://github.com/RyanJMah/dotfiles).
 
-## TODO
-
-* Remove as many `rm -rf` as possible (scary)
-
 ## Dependencies
 
 * `python3`
