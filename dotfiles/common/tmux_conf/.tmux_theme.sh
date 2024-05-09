@@ -46,7 +46,7 @@ tmux set-option -g status-right ""
 tmux set-option -ga status-right "#[fg=${!colors[0]},bg=${powerbg},nobold,nounderscore,noitalics]${right_sep}#[fg=${!colors[1]},bg=${!colors[0]}] $script "
 powerbg=${!colors[0]}
 
-tmux set-option -ga status-right "#[fg=${green},bg=${yellow}]${right_sep}#[bg=${green},fg=${black},bold] #h #[bg=${black},fg=${green}]"
+tmux set-option -ga status-right "#[bg=${blue},fg=${black},bold] %a %b %d #[bg=${yellow},fg=${black},bold] %I:%M %p #[bg=${green},fg=${black},bold] #h #[bg=${black},fg=${green}]"
 tmux set-window-option -g window-status-current-format "#[bg=${white},fg=${gray}]${left_sep} #[fg=${black},bg=${white}]#I #W${current_flags} #[bg=${gray},fg=${white}]${left_sep}"
 
 tmux set-window-option -g window-status-format "#[bg=${gray},fg=${gray}]${left_sep} #[fg=${white},bg=${gray}]#I #W${flags} #[bg=${gray},fg=${gray}]${left_sep}"
