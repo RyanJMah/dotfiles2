@@ -47,11 +47,23 @@ class Platform(ABC):
 
     ##############################################################################
     def install_oh_my_zsh_conf(self):
+        ok = self.shell.check_dependency("zsh")
+        if not ok:
+            print("ERROR: zsh is not installed, skipping...")
+            return
+
+        self.install_url("https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh")
+        self.exec_bash("sh install.sh --unattended")
+
         cmd = f"""
-        sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-        source {self.paths.HOME}/.zshrc
+        ln -sf {self.paths.DOTFILES_COMMON_DIR}/oh_my_zsh_conf/.zshrc {self.paths.HOME}/.zshrc
+
+        cp {self.paths.DOTFILES_COMMON_DIR}/oh_my_zsh_conf/*.zsh-theme {self.paths.HOME}/.oh-my-zsh/themes
         """
         self.exec_bash(cmd)
+
+        # Install plugins
+        self.shell.clone_git_repo("https://github.com/zsh-users/zsh-syntax-highlighting.git", f"{self.paths.HOME}/.oh-my-zsh/custom/plugins")
     
 
     def install_minimal_shell_conf(self):

@@ -2,8 +2,13 @@
 export ZSH="$HOME/.oh-my-zsh"
 
 # theme
-export ZSH_THEME="ryan-apple"
-export ZSH_THEME="ryan-debian"
+if [[ $OSTYPE == "linux-gnu"* ]];
+then
+    export ZSH_THEME="ryan-linux"
+else
+    export ZSH_THEME="ryan-apple"
+fi
+
 
 export VIRTUAL_ENV_DISABLE_PROMPT=0
 
@@ -45,4 +50,4 @@ plugins=(git zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
-source $HOME/custom_aliases.sh
+source $HOME/.custom_aliases.sh
