@@ -135,8 +135,6 @@ class Platform(ABC):
                 """
                 self.shell.run(cmd)
 
-            # self.install_url( f"https://github.com/{plugin}.git", f"{plugin_dir}/{plugin_name}")
-
 
         # Install plugin dependencies
         self.install_url( self.get_ripgrep_download_url() )
@@ -191,9 +189,8 @@ class Platform(ABC):
             self.exec_bash(cmd)
 
         # Install my own custom theme
+        self.install_url("https://github.com/RyanJMah/Ryan-VSCode-Theme/releases/download/2.0.0/ryan-vscode-theme-2.0.0.vsix")
         cmd = f"""
-        curl -LO https://github.com/RyanJMah/Ryan-VSCode-Theme/releases/download/2.0.0/ryan-vscode-theme-2.0.0.vsix
-
         {code} --install-extension ryan-vscode-theme-2.0.0.vsix
         rm ryan-vscode-theme-2.0.0.vsix
         """
@@ -210,6 +207,11 @@ class Platform(ABC):
         ncurses_flags  = configure_flags.get("ncurses", "")
         tmux_flags     = configure_flags.get("tmux", "")
 
+        self.install_url("https://pkg-config.freedesktop.org/releases/pkg-config-0.29.2.tar.gz")
+        self.install_url("https://github.com/libevent/libevent/releases/download/release-2.1.12-stable/libevent-2.1.12-stable.tar.gz")
+        self.install_url("https://ftp.gnu.org/gnu/ncurses/ncurses-6.3.tar.gz")
+        self.install_url("https://github.com/tmux/tmux/releases/download/3.4/tmux-3.4.tar.gz")
+
         cmd = f"""
         set -e
 
@@ -217,7 +219,6 @@ class Platform(ABC):
         mkdir -p $INSTALL_DIR
 
         # Install pkg-config
-        curl -LO https://pkg-config.freedesktop.org/releases/pkg-config-0.29.2.tar.gz
         tar -zxf pkg-config-*.tar.gz
 
         cd pkg-config-*/
@@ -229,8 +230,6 @@ class Platform(ABC):
         PKG_CONFIG_BIN=$INSTALL_DIR/bin/pkg-config
 
         # install libevent
-
-        curl -LO https://github.com/libevent/libevent/releases/download/release-2.1.12-stable/libevent-2.1.12-stable.tar.gz
         tar -zxf libevent-*.tar.gz
 
         cd libevent-*/
@@ -241,7 +240,6 @@ class Platform(ABC):
         cd ..
 
         # install ncurses
-        curl -LO https://ftp.gnu.org/gnu/ncurses/ncurses-6.3.tar.gz
         tar -zxf ncurses-*.tar.gz
 
         cd ncurses-*/
@@ -251,8 +249,6 @@ class Platform(ABC):
         cd ..
 
         # install tmux
-        curl -LO https://github.com/tmux/tmux/releases/download/3.4/tmux-3.4.tar.gz
-
         tar -zxf tmux-*.tar.gz
 
         cd tmux-*/
