@@ -40,8 +40,24 @@ All dependencies should be able to be installed by `xcode-select --install`.
 
 ## Installation
 
+Locally, you can just do this.
+
 ```shell
 ./quick-install.sh
+```
+
+### Remote Servers
+
+The Linux configuration supports installing on remote servers, even if they
+do not have internet access due to firewalls or what not (which is quite common
+for large companies).
+
+This works by doing all necessary installs from internet locally, then sftp-ing
+the files up. This method of installation can be invoked like so:
+
+```bash
+# see --help for more options
+python3 install.py --os linux --remote localhost --user testuser --password pass --port 2222
 ```
 
 ## Test Environments

@@ -24,8 +24,9 @@ RUN echo 'testuser:pass' | chpasswd
 # Copy files
 RUN mkdir /home/testuser/dotfiles2
 
-COPY dotfiles /home/testuser/dotfiles2/dotfiles
 COPY src /home/testuser/dotfiles2/src
+COPY dotfiles /home/testuser/dotfiles2/dotfiles
+COPY resources /home/testuser/dotfiles2/resources
 
 COPY install.py                             \
      quick_install.sh                       \

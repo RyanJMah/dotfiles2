@@ -8,11 +8,6 @@ from abc import ABC, abstractmethod
 from tempfile import TemporaryDirectory
 
 class Shell(ABC):
-    @property
-    @abstractmethod
-    def local_shell(self):
-        pass
-
     @abstractmethod
     def run(self, cmd_str: str):
         """
@@ -33,12 +28,17 @@ class Shell(ABC):
         """
         pass
 
+    @abstractmethod
+    def clone_git_repo( self,
+                        url: str,
+                        dst_dir: Optional[str] = None ):
+        """
+        Clone a git repository
+        """
+        pass
+
 
 class LocalShell(Shell):
-    @property
-    def local_shell(self):
-        return self
-
     def run(self, cmd_str: str):
         cmd = cmd_str.strip()
         try:
@@ -66,6 +66,26 @@ class LocalShell(Shell):
 
             return filepath
 
+    def clone_git_repo( self,
+                        url: str,
+                        dst_dir: Optional[str] = None ):
+
+        repo_name = url.split("/")[-1].replace(".git", "")
+
+        if dst_dir is None:
+            self.run(f"git clone {url}")
+            return repo_name
+        
+        # dst_dir is specified
+        else:
+            os.makedirs(dst_dir, exist_ok=True)
+            repo_path = os.path.join(dst_dir, repo_name)
+
+            self.run(f"git clone {url} {repo_path}")
+
+            return repo_path
+
+
 
 
 class RemoteShell_AuthType(Enum):
@@ -73,10 +93,6 @@ class RemoteShell_AuthType(Enum):
     PRIVATE_KEY = 1
 
 class RemoteShell(ABC):
-    @property
-    def local_shell(self):
-        return self._local_shell
-
     def _run(self, conn: fabric.Connection, cmd_str: str):
         cmd = cmd_str.strip()
 
@@ -126,7 +142,7 @@ class RemoteShell(ABC):
                   password: Optional[str] = None,
                   priv_key: Optional[str] = None ):
 
-        self._local_shell = LocalShell()
+        self.local_shell = LocalShell()
 
         self.remote = remote
         self.user = user
@@ -196,7 +212,7 @@ class RemoteShell(ABC):
         """
         with TemporaryDirectory() as tmp_dir:
             # Download file locally
-            filepath = self._local_shell.install(url, tmp_dir)
+            filepath = self.local_shell.install(url, tmp_dir)
 
             if dst_dir is not None:
                 self._conn.run(f"mkdir -p {dst_dir}")
@@ -206,3 +222,24 @@ class RemoteShell(ABC):
             # Delete local file
             os.remove(filepath)
 
+    def clone_git_repo( self,
+                        url: str,
+                        dst_dir: Optional[str] = None ):
+
+        with TemporaryDirectory() as tmp_dir:
+            repo_path    = self.local_shell.clone_git_repo(url, tmp_dir)
+            repo_tarball = f"{repo_path}.tar.gz"
+
+            self.shell.local_shell.run(f"tar -czvf {repo_tarball} {repo_path}")
+
+            self.shell.put(repo_tarball, dst_dir)
+
+        # Extract
+        tarball_name = repo_tarball.split("/")[-1]        
+
+        cmd = f"""
+        cd {dst_dir}
+        tar -xzf {tarball_name}
+        rm {tarball_name}
+        """
+        self.shell.run(cmd)
