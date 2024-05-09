@@ -10,18 +10,8 @@ sys.path.append(SRC_DIR)
 from common.platform import Platform
 
 class Linux(Platform):
-    def install_nvim(self):
-        cmd = f"""
-        curl -LO https://github.com/neovim/neovim/releases/download/v0.9.5/nvim-linux64.tar.gz
-        tar -xzf nvim-linux64.tar.gz
-
-        rm nvim-linux64.tar.gz
-
-        mkdir -p {self.paths.HOME}/.local
-        mv nvim-linux64 {self.paths.HOME}/.local/nvim
-        """
-
-        self.exec_bash(cmd)
+    def get_nvim_download_url(self) -> str:
+        return "https://github.com/neovim/neovim/releases/download/v0.9.5/nvim-linux64.tar.gz"
 
     def get_code_cmd(self) -> str:
         return "/usr/bin/code"

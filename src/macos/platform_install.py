@@ -9,18 +9,8 @@ sys.path.append(SRC_DIR)
 from common.platform import Platform
 
 class MacOS(Platform):
-    def install_nvim(self):
-        cmd = f"""
-        curl -LO https://github.com/neovim/neovim/releases/download/v0.9.5/nvim-macos.tar.gz
-
-        xattr -c ./nvim-macos.tar.gz
-        tar -xzf nvim-macos.tar.gz
-
-        mkdir -p {self.paths.HOME}/.local
-        mv nvim-macos {self.paths.HOME}/.local/nvim
-        """
-
-        self.exec_bash(cmd)
+    def get_nvim_download_url(self) -> str:
+        return "https://github.com/neovim/neovim/releases/download/v0.9.5/nvim-macos.tar.gz"
 
     def get_code_conf_dir(self) -> str:
         return f"{self.paths.HOME}/Library/Application\\ Support/Code/User"

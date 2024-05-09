@@ -1,5 +1,6 @@
 import os
 import fabric
+import atexit
 import subprocess
 from enum import Enum
 from typing import Optional
@@ -10,6 +11,11 @@ class Shell(ABC):
     def run(self, cmd_str: str):
         pass
 
+    @abstractmethod
+    def install(self, url: str, dst_dir: Optional[str] = None):
+        pass
+
+
 class LocalShell(Shell):
     def run(self, cmd_str: str):
         cmd = cmd_str.strip()
@@ -18,6 +24,12 @@ class LocalShell(Shell):
         
         except subprocess.CalledProcessError as e:
             print(f"ERROR: {e}")
+
+    def install(self, url: str, dst_dir: Optional[str] = None):
+        self.run(f"curl -LO {url}")
+
+        if dst_dir is not None:
+            self.run(f"mv {os.path.basename(url)} {dst_dir}")
 
 
 class RemoteShell_AuthType(Enum):
@@ -56,12 +68,17 @@ class RemoteShell(ABC):
 
         return conn
 
+    def _exit_handler(self):
+        self.conn.close()
+        os.remove(self._tmp_folder, missing_ok=True)
 
     def __init__( self,
                   remote: str,
                   user: str,
                   password: Optional[str] = None,
                   priv_key: Optional[str] = None ):
+
+        self.local_shell = LocalShell()
 
         self.remote = remote
         self.user = user
@@ -88,9 +105,23 @@ class RemoteShell(ABC):
         # Establish connection
         self._conn = self._log_in()
 
-    def __del__(self):
-        self._conn.close()
+        self._tmp_folder = "/tmp/remote_shell_tmp"
+
+        os.remove(self._tmp_folder, missing_ok=True)
+        os.makedirs(self._tmp_folder, exist_ok=True)
+
 
     def run(self, cmd_str: str):
         self._run(self._conn, cmd_str)
 
+    def install(self, url: str, dst_dir: Optional[str] = None):
+        """
+        curl the file locally then sftp it
+        to the remote machine
+        """
+        self.local_shell.install(url)
+
+        filename = url.split("/")[-1]
+
+        self.conn.put(filename)
+        self.conn.run(f"mv {filename} {dst_dir}")

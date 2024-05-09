@@ -17,7 +17,7 @@ class Platform(ABC):
 
     ##############################################################################
     @abstractmethod
-    def install_nvim(self):
+    def get_nvim_download_url(self) -> str:
         pass
 
     @abstractmethod
@@ -67,6 +67,20 @@ class Platform(ABC):
         ln -sf {self.paths.DOTFILES_COMMON_DIR}/.custom_aliases.sh {self.paths.HOME}/.custom_aliases.sh
         """
 
+        self.exec_bash(cmd)
+
+
+    def install_nvim(self):
+        cmd = f"""
+        curl -LO {self.get_nvim_download_url()}
+        # curl -LO https://github.com/neovim/neovim/releases/download/v0.9.5/nvim-linux64.tar.gz
+        tar -xzf nvim-*.tar.gz
+
+        rm nvim-*.tar.gz
+
+        mkdir -p {self.paths.HOME}/.local
+        mv nvim-* {self.paths.HOME}/.local/nvim
+        """
         self.exec_bash(cmd)
 
 
