@@ -81,6 +81,8 @@ class Platform(ABC):
         rm nvim-*.tar.gz
 
         mkdir -p {self.paths.HOME}/.local
+
+        rm -rf {self.paths.HOME}/.local/nvim
         mv nvim-* {self.paths.HOME}/.local/nvim
         """
         self.exec_bash(cmd)
@@ -110,12 +112,8 @@ class Platform(ABC):
 
         for plugin in plugins:
             plugin_name = plugin.split("/")[-1]
+            self.install_url( f"https://github.com/{plugin}.git", f"{plugin_dir}/{plugin_name}", download_cmd="git clone")
 
-            cmd = f"""
-            git clone https://github.com/{plugin}.git tmp
-            mv tmp {plugin_dir}/{plugin_name}
-            """
-            self.exec_bash(cmd)
 
         # Install plugin dependencies
         self.install_url( self.get_ripgrep_download_url() )

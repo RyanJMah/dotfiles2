@@ -1,5 +1,6 @@
 import os
 import sys
+from tempfile import TemporaryDirectory
 
 from app_paths import SRC_DIR
 from app_paths import LocalPaths, RemotePaths
@@ -30,14 +31,38 @@ def prompt_user_choice(msg: str, choices: list) -> str:
 def install_all(os_type, remote, user, password, priv_key, port):
     if remote is not None:
         shell = RemoteShell(remote, user, port, password, priv_key)
-        paths = RemotePaths()
+        paths = RemotePaths(user)
 
         # Push repo to remote
         this_dir = os.path.dirname(os.path.abspath(__file__))
         src_dir  = os.path.dirname(this_dir)
         repo_dir = os.path.dirname(src_dir)
 
-        shell.put(repo_dir)
+        with TemporaryDirectory() as tmp_dir:
+            # compress
+            cmd = f"""
+            cd {repo_dir}
+
+            tar -czvf {tmp_dir}/dotfiles2.tar.gz .
+            """
+            shell.local_shell.run(cmd)
+
+            # push
+            shell.put(f"{tmp_dir}/dotfiles2.tar.gz", paths.HOME)
+
+            # remove local
+            os.remove(f"{tmp_dir}/dotfiles2.tar.gz")
+
+        # extract
+        cmd = f"""
+        mkdir -p dotfiles2
+        tar -xzf dotfiles2.tar.gz -C dotfiles2
+
+        rm dotfiles2.tar.gz
+
+        cd dotfiles2 && ls -l
+        """
+        shell.run(cmd)
 
     else:
         shell = LocalShell()
