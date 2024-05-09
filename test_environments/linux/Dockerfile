@@ -9,8 +9,6 @@ RUN apt install -y  \
     python3         \
     python3-pip     \
     curl            \
-    libssl-dev      \
-    pkg-config      \
     bison
 
 # Clean up cache to reduce image size

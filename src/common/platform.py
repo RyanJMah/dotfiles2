@@ -177,15 +177,24 @@ class Platform(ABC):
         set -e
 
         INSTALL_DIR={install_dir}
-
         mkdir -p $INSTALL_DIR
+
+        # Install pkg-config
+        curl -LO https://pkg-config.freedesktop.org/releases/pkg-config-0.29.2.tar.gz
+        tar -zxf pkg-config-*.tar.gz
+
+        cd pkg-config-*/
+        CFLAGS=-Wno-int-conversion ./configure --prefix=$INSTALL_DIR --with-internal-glib
+        make -j && make install
+
+        cd ..
+
+        PKG_CONFIG_BIN=$INSTALL_DIR/bin/pkg-config
 
         # install libevent
 
         curl -LO https://github.com/libevent/libevent/releases/download/release-2.1.12-stable/libevent-2.1.12-stable.tar.gz
-
         tar -zxf libevent-*.tar.gz
-        rm libevent-2.1.12-stable.tar.gz
 
         cd libevent-*/
 
@@ -196,12 +205,10 @@ class Platform(ABC):
 
         # install ncurses
         curl -LO https://ftp.gnu.org/gnu/ncurses/ncurses-6.3.tar.gz
-
         tar -zxf ncurses-*.tar.gz
-        rm ncurses-6.3.tar.gz
 
         cd ncurses-*/
-        ./configure --prefix=$INSTALL_DIR --with-termlib --enable-pc-files --with-pkg-config-libdir=$INSTALL_DIR/lib/pkgconfig {ncurses_flags}
+        ./configure --prefix=$INSTALL_DIR --with-termlib --enable-pc-files --with-pkg-config=$PKG_CONFIG_BIN --with-pkg-config-libdir=$INSTALL_DIR/lib/pkgconfig {ncurses_flags}
         make -j && make install
 
         cd ..
@@ -210,13 +217,14 @@ class Platform(ABC):
         curl -LO https://github.com/tmux/tmux/releases/download/3.4/tmux-3.4.tar.gz
 
         tar -zxf tmux-*.tar.gz
-        rm tmux-3.4.tar.gz
 
         cd tmux-*/
-        PKG_CONFIG_PATH=$INSTALL_DIR/lib/pkgconfig ./configure --prefix=$INSTALL_DIR {tmux_flags}
+        PKG_CONFIG_PATH=$INSTALL_DIR/lib/pkgconfig PKG_CONFIG=$PKG_CONFIG_BIN ./configure --prefix=$INSTALL_DIR {tmux_flags}
         make -j && make install
 
-        rm -rf libevent-* ncurses-* tmux-*
+        cd ..
+
+        rm -r libevent-* ncurses-* tmux-* pkg-config-*
         """
         self.exec_bash(cmd)
 
