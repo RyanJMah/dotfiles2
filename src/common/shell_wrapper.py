@@ -1,4 +1,5 @@
 import os
+import sys
 import fabric
 import atexit
 import subprocess
@@ -9,7 +10,7 @@ from tempfile import TemporaryDirectory
 
 class Shell(ABC):
     @abstractmethod
-    def run(self, cmd_str: str):
+    def run(self, cmd_str: str) -> bool:
         """
         Run a shell command
         """
@@ -38,14 +39,28 @@ class Shell(ABC):
         pass
 
 
+    @abstractmethod
+    def _check_dependency(self, dependency: str) -> bool:
+        """
+        Check if a dependency is installed
+        """
+        pass
+
+    def check_dependency(self, dependency: str) -> bool:
+        print(f"checking for {dependency}... ", end="")
+        return self._check_dependency(dependency)
+
+
 class LocalShell(Shell):
-    def run(self, cmd_str: str):
+    def run(self, cmd_str: str) -> bool:
         cmd = cmd_str.strip()
         try:
             subprocess.run(cmd, shell=True, text=True, check=True)
+            return True
         
         except subprocess.CalledProcessError as e:
             print(f"ERROR: {e}")
+            return False
 
     def install( self,
                  url: str,
@@ -85,21 +100,35 @@ class LocalShell(Shell):
 
             return repo_path
 
+    def _check_dependency(self, dependency: str) -> bool:
+        # return self.run(f"which {dependency}")
+        p = subprocess.Popen(["which", dependency], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
+        stdout, stderr = p.communicate()
+        print(stdout.decode(), end="")
 
+        return p.returncode == 0
 
 class RemoteShell_AuthType(Enum):
     PASSWORD = 0
     PRIVATE_KEY = 1
 
-class RemoteShell(ABC):
-    def _run(self, conn: fabric.Connection, cmd_str: str):
+class RemoteShell(Shell):
+    def _run(self, conn: fabric.Connection, cmd_str: str) -> bool:
         cmd = cmd_str.strip()
 
-        result = conn.run(cmd)
+        try:
+            result = conn.run(cmd)
 
-        if result.failed:
-            print(f"ERROR: {result.stderr}")
+            if result.failed:
+                print(f"ERROR: {result.stderr}")
+                return False
+            else:
+                return True
+        
+        except Exception as e:
+            print(f"ERROR: {e}")
+            return False
 
     def _log_in(self) -> fabric.Connection:
         conn: fabric.Connection
@@ -199,8 +228,8 @@ class RemoteShell(ABC):
             self._conn.put(local=local_path, remote=remote_path, preserve_mode=False)
 
 
-    def run(self, cmd_str: str):
-        self._run(self._conn, cmd_str)
+    def run(self, cmd_str: str) -> bool:
+        return self._run(self._conn, cmd_str)
 
 
     def install( self,
@@ -243,3 +272,6 @@ class RemoteShell(ABC):
         rm {tarball_name}
         """
         self.shell.run(cmd)
+
+    def _check_dependency(self, dependency: str) -> bool:
+        return self.run(f"which {dependency}")

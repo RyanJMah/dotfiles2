@@ -81,10 +81,10 @@ class Platform(ABC):
 
         rm nvim-*.tar.gz
 
-        mkdir -p {self.paths.HOME}/.local
+        mkdir -p {self.paths.HOME}/.local/nvim
 
-        rm -rf {self.paths.HOME}/.local/nvim
-        mv nvim-* {self.paths.HOME}/.local/nvim
+        cp -r nvim-*/ {self.paths.HOME}/.local/nvim
+        rm -r nvim-*
         """
         self.exec_bash(cmd)
 
@@ -148,9 +148,13 @@ class Platform(ABC):
         tar -zxf ripgrep-*.tar.gz
         rm ripgrep-*.tar.gz
 
-        mkdir -p {self.paths.HOME}/.local/bin/ripgrep
-        mv ripgrep-* {self.paths.HOME}/.local/bin/ripgrep
+        mkdir -p {self.paths.HOME}/.local/ripgrep
+
+        cp -r ripgrep-*/ {self.paths.HOME}/.local/ripgrep
+        rm -r ripgrep-*
+
         ln -sf {self.paths.HOME}/.local/bin/ripgrep/rg {self.paths.HOME}/.local/bin/rg
+    
 
         # xxd (build from source)
         cd tmp

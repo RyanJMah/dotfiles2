@@ -46,7 +46,10 @@ class RemotePaths(Paths):
 
     @property
     def HOME(self):
-        return f"/home/{self.user}"
+        if self.user == "root":
+            return "/root"
+        else:
+            return f"/home/{self.user}"
 
     @property
     def ROOT_DIR(self):

@@ -6,7 +6,13 @@ from app_paths import SRC_DIR
 from app_paths import LocalPaths, RemotePaths
 sys.path.append(SRC_DIR)
 
+from dependencies import (
+    check_dependencies,
+    LOCAL_DEPENDENCIES,
+    REMOTE_DEPENDENCIES
+)
 from shell_wrapper import LocalShell, RemoteShell
+
 from linux.platform_install import Linux
 from macos.platform_install import MacOS
 
@@ -33,6 +39,17 @@ def install_all(os_type, remote, user, password, priv_key, port):
         shell = RemoteShell(remote, user, port, password, priv_key)
         paths = RemotePaths(user)
 
+        ok = True
+
+        print("checking remote dependencies...")
+        ok &= check_dependencies(shell, REMOTE_DEPENDENCIES["remote"])
+
+        print("checking local dependencies...")
+        ok &= check_dependencies(shell, REMOTE_DEPENDENCIES["local"])
+
+        if not ok:
+            input("WARNING: Some dependencies are missing, press enter to continue...")
+
         # Push repo to remote
         this_dir = os.path.dirname(os.path.abspath(__file__))
         src_dir  = os.path.dirname(this_dir)
@@ -56,7 +73,7 @@ def install_all(os_type, remote, user, password, priv_key, port):
         # extract
         cmd = f"""
         mkdir -p dotfiles2
-        tar -xzf dotfiles2.tar.gz -C dotfiles2
+        tar -xzvf dotfiles2.tar.gz -C dotfiles2
 
         rm dotfiles2.tar.gz
 
@@ -64,9 +81,14 @@ def install_all(os_type, remote, user, password, priv_key, port):
         """
         shell.run(cmd)
 
+        print("dotfiles2 repo successfully pushed to remote machine...")
+
     else:
         shell = LocalShell()
         paths = LocalPaths()
+
+        if not check_dependencies(shell, LOCAL_DEPENDENCIES):
+            input("WARNING: Some dependencies are missing, press enter to continue...")
 
 
     if os_type == "macos":
