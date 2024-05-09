@@ -2,6 +2,7 @@ from shell_wrapper import Shell
 
 REMOTE_DEPENDENCIES = {
     "remote": [
+        "python3",
         "tar",
         "make",
         ("gcc", "clang"),

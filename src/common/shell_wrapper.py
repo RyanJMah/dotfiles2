@@ -259,9 +259,16 @@ class RemoteShell(Shell):
             repo_path    = self.local_shell.clone_git_repo(url, tmp_dir)
             repo_tarball = f"{repo_path}.tar.gz"
 
-            self.shell.local_shell.run(f"tar -czvf {repo_tarball} {repo_path}")
+            repo_name = url.split("/")[-1].replace(".git", "")
 
-            self.shell.put(repo_tarball, dst_dir)
+            cmd = f"""
+            cd {tmp_dir}
+
+            tar -czvf {repo_name}.tar.gz {repo_name}
+            """
+            self.local_shell.run(cmd)
+        
+            self.put(repo_tarball, dst_dir)
 
         # Extract
         tarball_name = repo_tarball.split("/")[-1]        
@@ -271,7 +278,7 @@ class RemoteShell(Shell):
         tar -xzf {tarball_name}
         rm {tarball_name}
         """
-        self.shell.run(cmd)
+        self.run(cmd)
 
     def _check_dependency(self, dependency: str) -> bool:
         return self.run(f"which {dependency}")

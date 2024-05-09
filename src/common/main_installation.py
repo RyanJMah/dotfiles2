@@ -45,7 +45,7 @@ def install_all(os_type, remote, user, password, priv_key, port):
         ok &= check_dependencies(shell, REMOTE_DEPENDENCIES["remote"])
 
         print("checking local dependencies...")
-        ok &= check_dependencies(shell, REMOTE_DEPENDENCIES["local"])
+        ok &= check_dependencies(shell.local_shell, REMOTE_DEPENDENCIES["local"])
 
         if not ok:
             input("WARNING: Some dependencies are missing, press enter to continue...")

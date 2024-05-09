@@ -115,26 +115,7 @@ class Platform(ABC):
             plugin_name = plugin.split("/")[-1]
             plugin_url  = f"https://github.com/{plugin}.git"
 
-            with TemporaryDirectory() as tmp_dir:
-                # Clone locally and compress
-                self.shell.local_shell.run(f"git clone {plugin_url} {tmp_dir}/{plugin_name}")
-
-                cmd = f"""
-                cd {tmp_dir}
-                tar -czvf {plugin_name}.tar.gz {plugin_name}
-                """
-                self.shell.local_shell.run(cmd)
-
-                self.shell.put(f"{tmp_dir}/{plugin_name}.tar.gz", plugin_dir)
-
-                # Extract
-                cmd = f"""
-                cd {plugin_dir}
-                tar -xzf {plugin_name}.tar.gz
-                rm {plugin_name}.tar.gz
-                """
-                self.shell.run(cmd)
-
+            self.shell.clone_git_repo(plugin_url, f"{plugin_dir}")
 
         # Install plugin dependencies
         self.install_url( self.get_ripgrep_download_url() )
