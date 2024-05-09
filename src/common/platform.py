@@ -2,8 +2,9 @@ import os
 import subprocess
 from abc import ABC, abstractmethod
 from typing import Dict, Optional
+from tempfile import TemporaryDirectory
 
-from app_paths import Paths
+from app_paths import Paths, RESOURCES_DIR
 from shell_wrapper import Shell
 
 class Platform(ABC):
@@ -14,8 +15,8 @@ class Platform(ABC):
     def exec_bash(self, cmd_str):
         self.shell.run(cmd_str)
 
-    def install_url(self, url: str, dst_dir: Optional[str] = None):
-        self.shell.install(url, dst_dir)
+    def install_url(self, *args, **kwargs):
+        self.shell.install(*args, **kwargs)
 
     ##############################################################################
     @abstractmethod
@@ -107,12 +108,34 @@ class Platform(ABC):
         self.exec_bash(cmd)
 
         # install plugins
-        with open(os.path.join(self.paths.DOTFILES_COMMON_DIR, "nvim_conf", "plugins.txt"), "r") as f:
+        with open(os.path.join(RESOURCES_DIR, "nvim_plugins.txt"), "r") as f:
             plugins = f.read().strip().splitlines()
 
         for plugin in plugins:
             plugin_name = plugin.split("/")[-1]
-            self.install_url( f"https://github.com/{plugin}.git", f"{plugin_dir}/{plugin_name}", download_cmd="git clone")
+            plugin_url  = f"https://github.com/{plugin}.git"
+
+            with TemporaryDirectory() as tmp_dir:
+                # Clone locally and compress
+                self.shell.local_shell.run(f"git clone {plugin_url} {tmp_dir}/{plugin_name}")
+
+                cmd = f"""
+                cd {tmp_dir}
+                tar -czvf {plugin_name}.tar.gz {plugin_name}
+                """
+                self.shell.local_shell.run(cmd)
+
+                self.shell.put(f"{tmp_dir}/{plugin_name}.tar.gz", plugin_dir)
+
+                # Extract
+                cmd = f"""
+                cd {plugin_dir}
+                tar -xzf {plugin_name}.tar.gz
+                rm {plugin_name}.tar.gz
+                """
+                self.shell.run(cmd)
+
+            # self.install_url( f"https://github.com/{plugin}.git", f"{plugin_dir}/{plugin_name}")
 
 
         # Install plugin dependencies

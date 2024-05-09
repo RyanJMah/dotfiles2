@@ -8,6 +8,11 @@ from abc import ABC, abstractmethod
 from tempfile import TemporaryDirectory
 
 class Shell(ABC):
+    @property
+    @abstractmethod
+    def local_shell(self):
+        pass
+
     @abstractmethod
     def run(self, cmd_str: str):
         """
@@ -18,8 +23,7 @@ class Shell(ABC):
     @abstractmethod
     def install( self,
                  url: str,
-                 dst_dir: Optional[str] = None,
-                 download_cmd="curl -LO" ) -> str:
+                 dst_dir: Optional[str] = None ) -> str:
         """
         Install a file from a URL
 
@@ -31,6 +35,10 @@ class Shell(ABC):
 
 
 class LocalShell(Shell):
+    @property
+    def local_shell(self):
+        return self
+
     def run(self, cmd_str: str):
         cmd = cmd_str.strip()
         try:
@@ -41,20 +49,22 @@ class LocalShell(Shell):
 
     def install( self,
                  url: str,
-                 dst_dir: Optional[str] = None,
-                 download_cmd="curl -LO" ) -> str:
-
-        self.run(f"{download_cmd} {url}")
+                 dst_dir: Optional[str] = None ) -> str:
 
         filename = url.split("/")[-1]
-        if dst_dir is not None:
-            return filename
 
+        if dst_dir is None:
+            self.run(f"curl -LO {url}")
+            return filename
+        
+        # dst_dir is specified
         else:
             os.makedirs(dst_dir, exist_ok=True)
-            self.run(f"mv {filename} {dst_dir}")
+            filepath = os.path.join(dst_dir, filename)
 
-            return os.path.join(dst_dir, filename)
+            self.run(f"curl -Lo {filepath} {url}")
+
+            return filepath
 
 
 
@@ -63,6 +73,10 @@ class RemoteShell_AuthType(Enum):
     PRIVATE_KEY = 1
 
 class RemoteShell(ABC):
+    @property
+    def local_shell(self):
+        return self._local_shell
+
     def _run(self, conn: fabric.Connection, cmd_str: str):
         cmd = cmd_str.strip()
 
@@ -112,7 +126,7 @@ class RemoteShell(ABC):
                   password: Optional[str] = None,
                   priv_key: Optional[str] = None ):
 
-        self.local_shell = LocalShell()
+        self._local_shell = LocalShell()
 
         self.remote = remote
         self.user = user
@@ -175,15 +189,14 @@ class RemoteShell(ABC):
 
     def install( self,
                  url: str,
-                 dst_dir: Optional[str] = None,
-                 download_cmd="curl -LO" ) -> str:
+                 dst_dir: Optional[str] = None ) -> str:
         """
         curl the file locally then sftp it
         to the remote machine
         """
         with TemporaryDirectory() as tmp_dir:
             # Download file locally
-            filepath = self.local_shell.install(url, tmp_dir, download_cmd)
+            filepath = self._local_shell.install(url, tmp_dir)
 
             if dst_dir is not None:
                 self._conn.run(f"mkdir -p {dst_dir}")
