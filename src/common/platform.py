@@ -55,9 +55,12 @@ class Platform(ABC):
 
         if not os.path.exists(f"{self.paths.HOME}/.oh-my-zsh"):
             self.install_url("https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh")
-            self.exec_bash("sh install.sh --unattended")
 
-            os.remove("install.sh")
+            cmd = f"""
+            sh install.sh --unattended
+            rm install.sh
+            """
+            self.exec_bash(cmd)
 
             # Install plugins
             self.shell.clone_git_repo("https://github.com/zsh-users/zsh-syntax-highlighting.git", f"{self.paths.HOME}/.oh-my-zsh/custom/plugins")
@@ -110,27 +113,33 @@ class Platform(ABC):
 
 
     def install_nvim_conf(self):
+        # The plugins are installed in this repo as submodules, symlink them
+        plugins_dir           = f"{self.paths.HOME}/.local/share/nvim/site/pack/vendor/start"
+        submodule_plugins_dir = f"{self.paths.DOTFILES_COMMON_DIR}/nvim_conf/plugins"
+
         cmd = f"""
         set -e
 
         mkdir -p {self.paths.HOME}/.config/nvim
-        
+
         ln -sf {self.paths.DOTFILES_COMMON_DIR}/nvim_conf/.vimrc   {self.paths.HOME}/.vimrc
         ln -sf {self.paths.DOTFILES_COMMON_DIR}/nvim_conf/init.vim {self.paths.HOME}/.config/nvim/init.vim
 
         ln -sf {self.paths.DOTFILES_COMMON_DIR}/nvim_conf/.terminal-vimrc.vim {self.paths.HOME}/.terminal-vimrc.vim
         ln -sf {self.paths.DOTFILES_COMMON_DIR}/nvim_conf/.vscode-vimrc.vim   {self.paths.HOME}/.vscode-vimrc.vim
+
+        mkdir -p {plugins_dir}
+
+        # Loop through each file in the submodule plugins directory
+        for plugin in "{submodule_plugins_dir}"/*; do
+            # Extract the basename of the plugin
+            plugin_name="${{plugin##*/}}"
+
+            # Create a symbolic link in the plugins directory pointing to the original plugin file
+            ln -sf $submodule_plugins_dir/$plugin {plugins_dir}/$plugin_name
+        done
         """
         self.exec_bash(cmd)
-
-        # The plugins are installed in this repo as submodules, symlink them
-        plugins_dir           = f"{self.paths.HOME}/.local/share/nvim/site/pack/vendor/start"
-        submodule_plugins_dir = f"{self.paths.DOTFILES_COMMON_DIR}/nvim_conf/plugins"
-
-        self.exec_bash(f"mkdir -p {plugins_dir}")
-
-        for plugin in os.listdir(submodule_plugins_dir):
-            self.exec_bash(f"ln -sf {submodule_plugins_dir}/{plugin} {plugins_dir}/{plugin}")
 
 
         # Install plugin dependencies
@@ -154,7 +163,7 @@ class Platform(ABC):
 
         mkdir -p {self.paths.HOME}/.local/bin
         ln -sf {self.paths.HOME}/.local/ripgrep/rg {self.paths.HOME}/.local/bin/rg
-    
+
 
         # xxd (build from source)
         cd tmp

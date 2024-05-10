@@ -6,6 +6,14 @@ or brew install.
 
 For the original iteration of my dotfiles, see [here](https://github.com/RyanJMah/dotfiles).
 
+# Cloning
+
+NOTE: **YOU MUST CLONE WITH `--recursive` for the repo to work**
+
+```
+git clone --recursive https://github.com/RyanJMah/dotfiles2
+```
+
 ## Dependencies
 
 * `python3`
@@ -35,12 +43,6 @@ pip3 install -r requirements.txt
 All dependencies should be able to be installed by `xcode-select --install`.
 
 ## Installation
-
-First, after cloning, populate the submodules.
-
-```bash
-git submodule update --init --recursive
-```
 
 Locally, you can just do this.
 
