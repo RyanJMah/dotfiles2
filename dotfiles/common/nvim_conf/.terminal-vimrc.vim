@@ -57,8 +57,7 @@ let g:term_buf = 0
 let g:term_win = 0
 function! TermToggle(height)
     if win_gotoid(g:term_win)
-        " hide
-        bd!
+        hide
     else
         botright new
         exec "resize" . a:height
@@ -157,19 +156,6 @@ nnoremap <silent> <Leader>bd :Bclose<CR>
 "-----------------------------------------------------------------------------------
 " KEYMAPINGS
 
-" " SCROLLING
-" lua << EOF
-" require("neoscroll").setup({
-"     mappings = {'<C-u>', '<C-d>'}
-" })
-
-" local t = {}
-" t['<C-u>'] = {"scroll", {"-0.35", "false", "55"}}
-" t['<C-d>'] = {"scroll", {"0.35",  "false", "55"}}
-
-" require("neoscroll.config").set_mappings(t)
-" EOF
-
 " Ctrl+S to save
 noremap  <silent> <C-S> :w<CR>
 vnoremap <silent> <C-S> <C-C>:w<CR>
@@ -216,13 +202,15 @@ command! Search :Telescope live_grep
 command! NewTerm :call termopen($SHELL)
 
 " Alt+t to toggle terminal
-nnoremap <silent> <A-t> :call TermToggle(12)<CR>
-inoremap <silent> <A-t> <Esc>:call TermToggle(12)<CR>
-tnoremap <silent> <A-t> <C-\><C-n>:call TermToggle(12)<CR>
+nnoremap <silent> <A-t> :call TermToggle(9)<CR>
+tnoremap <silent> <A-t> <C-\><C-n>:call TermToggle(9)<CR>
+
 tnoremap <silent> <Esc> <C-\><C-n>
 
 " Unmap some stuff cus they're annoying
 inoremap <C-A> <NOP>
+
+nnoremap q <NOP>
 
 nnoremap <F2> <NOP>
 inoremap <F2> <NOP>
@@ -255,6 +243,83 @@ let g:termdebug_wide=1
 let g:winresizer_start_key = "<C-R>"
 let g:winresizer_vert_resize = 4
 let g:winresizer_horiz_resize = 1
+"-----------------------------------------------------------------------------------
+
+
+"-----------------------------------------------------------------------------------
+" Autocomplete
+lua <<EOF
+    -- Set up nvim-cmp.
+    local cmp = require'cmp'
+
+    cmp.setup({
+        snippet = {
+            -- REQUIRED - you must specify a snippet engine
+            expand = function(args)
+                vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+                -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+                -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+                -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+                -- vim.snippet.expand(args.body) -- For native neovim snippets (Neovim v0.10+)
+            end,
+        },
+        window = {
+            -- completion = cmp.config.window.bordered(),
+            -- documentation = cmp.config.window.bordered(),
+        },
+        mapping = cmp.mapping.preset.insert({
+            ["<Tab>"] = cmp.mapping(function(fallback)
+                if cmp.visible() then
+                    cmp.select_next_item()
+                else
+                    fallback()
+                end
+            end, {"i", "s"}),
+
+            ["<S-Tab>"] = cmp.mapping(function(fallback)
+                if cmp.visible() then
+                    cmp.select_prev_item()
+                else
+                    fallback()
+                end
+            end, {"i", "s"}),
+
+            ['<CR>'] = cmp.mapping.confirm({ select = true }),
+
+            ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+            ['<C-f>'] = cmp.mapping.scroll_docs(4),
+        }),
+        sources = cmp.config.sources({
+            { name = 'nvim_lsp' },
+            { name = 'vsnip' }, -- For vsnip users.
+            -- { name = 'luasnip' }, -- For luasnip users.
+            -- { name = 'ultisnips' }, -- For ultisnips users.
+            -- { name = 'snippy' }, -- For snippy users.
+        },
+        {
+            { name = 'buffer' },
+        })
+    })
+    -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
+    cmp.setup.cmdline({ '/', '?' }, {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = {
+            { name = 'buffer' }
+        }
+    })
+
+    -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+    cmp.setup.cmdline(':', {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = cmp.config.sources({
+            { name = 'path' }
+        }),
+        matching = { disallow_symbol_nonprefix_matching = false }
+    })
+
+    -- Set up lspconfig.
+    local capabilities = require('cmp_nvim_lsp').default_capabilities()
+EOF
 "-----------------------------------------------------------------------------------
 
 "-----------------------------------------------------------------------------------
@@ -554,12 +619,13 @@ let g:airline_filetype_overrides = {
 "-----------------------------------------------------------------------------------
 " indent blankline
 lua <<EOF
-require("ibl").setup()
-
-require("ibl").config = {
-    buftype_exclude = {"terminal", "NvimTree"},
-    show_first_indent_level = true,
-    char = '│',
+require("ibl").setup {
+    indent = {
+        char = '│',
+    },
+    scope = {
+        enabled = false
+    }
 }
 EOF
 "-----------------------------------------------------------------------------------

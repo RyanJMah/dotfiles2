@@ -36,6 +36,12 @@ All dependencies should be able to be installed by `xcode-select --install`.
 
 ## Installation
 
+First, after cloning, populate the submodules.
+
+```bash
+git submodule update --init --recursive
+```
+
 Locally, you can just do this.
 
 ```shell
@@ -80,8 +86,6 @@ framework in swift is used to spin-up a VM running a fresh install of MacOS.
 * To clone this repo in the VM, you will need to `xcode-select --install` first
 
 ```bash
-git submodule update --init-recursive
-
 cd test_environments/macos
 
 make

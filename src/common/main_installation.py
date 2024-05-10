@@ -133,5 +133,9 @@ def install_all(os_type, remote, user, password, priv_key, port):
         platform.install_vscode_extensions()
 
 
+    if prompt_user("Install misc. configurations?"):
+        platform.install_misc()
+
+
     if prompt_user("Run platform specific installation?"):
         platform.platform_specific_install()

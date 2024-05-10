@@ -6,11 +6,6 @@ noremap  <silent> <C-S> :w<CR>
 vnoremap <silent> <C-S> <C-C>:w<CR>
 inoremap <silent> <C-S> <C-O>:w<CR>
 
-" Unmap some stuff cus they're annoying
-inoremap <C-A> <NOP>
-nnoremap <s> <NOP>
-nnoremap q <NOP>
-
 " Ctrl+Z to undo
 nnoremap <C-Z> u
 inoremap <C-Z> <Esc>ui
@@ -33,12 +28,17 @@ vnoremap <C-l> e
 nnoremap <silent> bn :bn<CR>
 nnoremap <silent> bp :bp<CR>
 nnoremap <silent> bd :bd<CR>
-"-----------------------------------------------------------------------------------
 
-"-----------------------------------------------------------------------------------
-" PLUGINS
-call plug#begin("~/.vim/plugged")
-call plug#end()
-"-----------------------------------------------------------------------------------
+" Unmap some stuff cus they're annoying
+inoremap <C-A> <NOP>
 
+nnoremap q <NOP>
 
+nnoremap <F2> <NOP>
+inoremap <F2> <NOP>
+vnoremap <F2> <NOP>
+
+nnoremap <F1> <NOP>
+inoremap <F1> <NOP>
+vnoremap <F1> <NOP>
+"-----------------------------------------------------------------------------------

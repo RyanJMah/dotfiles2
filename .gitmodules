@@ -1,3 +1,72 @@
 [submodule "test_environments/macos/MacOS-VM"]
 	path = test_environments/macos
 	url = https://github.com/RyanJMah/MacOS-VM
+[submodule "dotfiles/common/nvim_conf/plugins/Ryan-VIM-Theme"]
+	path = dotfiles/common/nvim_conf/plugins/Ryan-VIM-Theme
+	url = https://github.com/RyanJMah/Ryan-VIM-Theme
+[submodule "dotfiles/common/nvim_conf/plugins/nvim-tree.lua"]
+	path = dotfiles/common/nvim_conf/plugins/nvim-tree.lua
+	url = https://github.com/nvim-tree/nvim-tree.lua
+[submodule "dotfiles/common/nvim_conf/plugins/nvim-web-devicons"]
+	path = dotfiles/common/nvim_conf/plugins/nvim-web-devicons
+	url = https://github.com/nvim-tree/nvim-web-devicons
+[submodule "dotfiles/common/nvim_conf/plugins/bufferline.nvim"]
+	path = dotfiles/common/nvim_conf/plugins/bufferline.nvim
+	url = https://github.com/akinsho/bufferline.nvim
+[submodule "dotfiles/common/nvim_conf/plugins/vim-airline"]
+	path = dotfiles/common/nvim_conf/plugins/vim-airline
+	url = https://github.com/vim-airline/vim-airline
+[submodule "dotfiles/common/nvim_conf/plugins/vim-gitgutter"]
+	path = dotfiles/common/nvim_conf/plugins/vim-gitgutter
+	url = https://github.com/airblade/vim-gitgutter
+[submodule "dotfiles/common/nvim_conf/plugins/vim-fugitive"]
+	path = dotfiles/common/nvim_conf/plugins/vim-fugitive
+	url = https://github.com/tpope/vim-fugitive
+[submodule "dotfiles/common/nvim_conf/plugins/hex.nvim"]
+	path = dotfiles/common/nvim_conf/plugins/hex.nvim
+	url = https://github.com/RaafatTurki/hex.nvim
+[submodule "dotfiles/common/nvim_conf/plugins/indent-blankline.nvim"]
+	path = dotfiles/common/nvim_conf/plugins/indent-blankline.nvim
+	url = https://github.com/lukas-reineke/indent-blankline.nvim
+[submodule "dotfiles/common/nvim_conf/plugins/vim-commentary"]
+	path = dotfiles/common/nvim_conf/plugins/vim-commentary
+	url = https://github.com/tpope/vim-commentary
+[submodule "dotfiles/common/nvim_conf/plugins/telescope.nvim"]
+	path = dotfiles/common/nvim_conf/plugins/telescope.nvim
+	url = https://github.com/nvim-telescope/telescope.nvim
+[submodule "dotfiles/common/nvim_conf/plugins/plenary.nvim"]
+	path = dotfiles/common/nvim_conf/plugins/plenary.nvim
+	url = https://github.com/nvim-lua/plenary.nvim
+[submodule "dotfiles/common/nvim_conf/plugins/winresizer"]
+	path = dotfiles/common/nvim_conf/plugins/winresizer
+	url = https://github.com/simeji/winresizer
+[submodule "dotfiles/common/nvim_conf/plugins/nvim-treesitter"]
+	path = dotfiles/common/nvim_conf/plugins/nvim-treesitter
+	url = https://github.com/nvim-treesitter/nvim-treesitter
+[submodule "dotfiles/common/nvim_conf/plugins/nvim-autopairs"]
+	path = dotfiles/common/nvim_conf/plugins/nvim-autopairs
+	url = https://github.com/windwp/nvim-autopairs
+[submodule "dotfiles/common/nvim_conf/plugins/cmp-vsnip"]
+	path = dotfiles/common/nvim_conf/plugins/cmp-vsnip
+	url = https://github.com/hrsh7th/cmp-vsnip
+[submodule "dotfiles/common/nvim_conf/plugins/vim-vsnip"]
+	path = dotfiles/common/nvim_conf/plugins/vim-vsnip
+	url = https://github.com/hrsh7th/vim-vsnip
+[submodule "dotfiles/common/nvim_conf/plugins/nvim-lspconfig"]
+	path = dotfiles/common/nvim_conf/plugins/nvim-lspconfig
+	url = https://github.com/neovim/nvim-lspconfig
+[submodule "dotfiles/common/nvim_conf/plugins/cmp-nvim-lsp"]
+	path = dotfiles/common/nvim_conf/plugins/cmp-nvim-lsp
+	url = https://github.com/hrsh7th/cmp-nvim-lsp
+[submodule "dotfiles/common/nvim_conf/plugins/cmp-buffer"]
+	path = dotfiles/common/nvim_conf/plugins/cmp-buffer
+	url = https://github.com/hrsh7th/cmp-buffer
+[submodule "dotfiles/common/nvim_conf/plugins/cmp-path"]
+	path = dotfiles/common/nvim_conf/plugins/cmp-path
+	url = https://github.com/hrsh7th/cmp-path
+[submodule "dotfiles/common/nvim_conf/plugins/cmp-cmdline"]
+	path = dotfiles/common/nvim_conf/plugins/cmp-cmdline
+	url = https://github.com/hrsh7th/cmp-cmdline
+[submodule "dotfiles/common/nvim_conf/plugins/nvim-cmp"]
+	path = dotfiles/common/nvim_conf/plugins/nvim-cmp
+	url = https://github.com/hrsh7th/nvim-cmp

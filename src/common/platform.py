@@ -61,7 +61,7 @@ class Platform(ABC):
 
             # Install plugins
             self.shell.clone_git_repo("https://github.com/zsh-users/zsh-syntax-highlighting.git", f"{self.paths.HOME}/.oh-my-zsh/custom/plugins")
- 
+
         cmd = f"""
         ln -sf {self.paths.DOTFILES_COMMON_DIR}/oh_my_zsh_conf/.zshrc {self.paths.HOME}/.zshrc
 
@@ -110,8 +110,6 @@ class Platform(ABC):
 
 
     def install_nvim_conf(self):
-        plugin_dir = f"{self.paths.HOME}/.local/share/nvim/site/pack/vendor/start"
-
         cmd = f"""
         set -e
 
@@ -122,20 +120,18 @@ class Platform(ABC):
 
         ln -sf {self.paths.DOTFILES_COMMON_DIR}/nvim_conf/.terminal-vimrc.vim {self.paths.HOME}/.terminal-vimrc.vim
         ln -sf {self.paths.DOTFILES_COMMON_DIR}/nvim_conf/.vscode-vimrc.vim   {self.paths.HOME}/.vscode-vimrc.vim
-
-        mkdir -p {plugin_dir}
         """
         self.exec_bash(cmd)
 
-        # install plugins
-        with open(os.path.join(RESOURCES_DIR, "nvim_plugins.txt"), "r") as f:
-            plugins = f.read().strip().splitlines()
+        # The plugins are installed in this repo as submodules, symlink them
+        plugins_dir           = f"{self.paths.HOME}/.local/share/nvim/site/pack/vendor/start"
+        submodule_plugins_dir = f"{self.paths.DOTFILES_COMMON_DIR}/nvim_conf/plugins"
 
-        for plugin in plugins:
-            plugin_name = plugin.split("/")[-1]
-            plugin_url  = f"https://github.com/{plugin}.git"
+        self.exec_bash(f"mkdir -p {plugins_dir}")
 
-            self.shell.clone_git_repo(plugin_url, f"{plugin_dir}")
+        for plugin in os.listdir(submodule_plugins_dir):
+            self.exec_bash(f"ln -sf {submodule_plugins_dir}/{plugin} {plugins_dir}/{plugin}")
+
 
         # Install plugin dependencies
         self.install_url( self.get_ripgrep_download_url() )
@@ -275,6 +271,12 @@ class Platform(ABC):
         ln -sf {self.paths.DOTFILES_COMMON_DIR}/tmux_conf/.tmux.conf {self.paths.HOME}/.tmux.conf
         ln -sf {self.paths.DOTFILES_COMMON_DIR}/tmux_conf/.tmux_theme.sh {self.paths.HOME}/.tmux_theme.sh
         ln -sf {self.paths.DOTFILES_COMMON_DIR}/tmux_conf/.tmux_sensible.sh {self.paths.HOME}/.tmux_sensible.sh
+        """
+        self.exec_bash(cmd)
+
+    def install_misc(self):
+        cmd = f"""
+        ln -sf {self.paths.DOTFILES_COMMON_DIR}/scripts/fuck-windows {self.paths.HOME}/.local/bin
         """
         self.exec_bash(cmd)
     ##############################################################################
