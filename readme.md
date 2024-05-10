@@ -1,10 +1,21 @@
 # My Dotfiles
 
 Second iteration of my dotfiles, designed to be more minimal, lightweight, and have
-as little dependencies as possible. For example, no longer requires sudo apt install
-or brew install.
+as little dependencies as possible.
 
 For the original iteration of my dotfiles, see [here](https://github.com/RyanJMah/dotfiles).
+
+Some interesting features/choices include:
+
+* Doesn't require `sudo apt install` or `brew install` or equivalents (given that the
+  **minimal** dependencies are already installed)
+
+* `nvim` config doesn't use a plugin manage (e.g., plug), all plugins are managed as submodules within this repository.
+    * The installation scripts symlink the submodules to the appropriate directories
+    * A big advantage of this approach is that all plugin commits are pinned, meaning no more bricking your
+      setup by doing `:PlugUpdate`, or anything like that
+
+* `tmux` config doesn't require `tpm`
 
 # Cloning and Troubleshooting
 
@@ -15,7 +26,7 @@ git clone --recursive https://github.com/RyanJMah/dotfiles2
 ```
 
 * You will probably have to do `:TSUninstall all` the first time you
-  launch nvim, if you're doing the remote setup
+  launch `nvim`, if you're doing the remote setup
 
 
 ## Dependencies
