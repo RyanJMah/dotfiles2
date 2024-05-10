@@ -10,12 +10,13 @@ For the original iteration of my dotfiles, see [here](https://github.com/RyanJMa
 
 * **YOU MUST CLONE WITH `--recursive` for the repo to work**
 
-* You will probably have to do `:TSUninstall all` the first time you
-  launch nvim, if you're doing the remote setup
-
 ```
 git clone --recursive https://github.com/RyanJMah/dotfiles2
 ```
+
+* You will probably have to do `:TSUninstall all` the first time you
+  launch nvim, if you're doing the remote setup
+
 
 ## Dependencies
 
