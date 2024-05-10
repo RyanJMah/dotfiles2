@@ -47,7 +47,13 @@ class MacOS(Platform):
         super().install_tmux()
     
     def platform_specific_install(self):
-        pass
+        print("Installing MacOS specific configurations...")
+        cmd = f"""
+        ln -sf {self.paths.DOTFILES_MACOS_DIR}/.yabairc {self.paths.HOME}/.yabairc
+        ln -sf {self.paths.DOTFILES_MACOS_DIR}/.skhdrc {self.paths.HOME}/.skhdrc
+        ln -sf {self.paths.DOTFILES_MACOS_DIR}/alacritty.yml {self.paths.HOME}/.config/alacritty/alacritty.yml
+        """
+        self.exec_bash(cmd)
 
     def install_aliases(self):
         super().install_aliases()
