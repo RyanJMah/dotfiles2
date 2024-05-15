@@ -1,9 +1,10 @@
 import os
 import click
+from typing import Tuple
 from tempfile import TemporaryDirectory
 
-from src.common.shell_wrapper import LocalShell, RemoteShell
-from src.common.app_paths import LocalPaths, RemotePaths
+from src.common.shell_wrapper import LocalShell, RemoteShell, Shell
+from src.common.app_paths import LocalPaths, RemotePaths, Paths
 
 from src.common.dependencies import (
     check_dependencies,
@@ -33,6 +34,63 @@ def prompt_user_choice(msg: str, choices: list) -> str:
         print(f"Invalid choice: {user_input}")
 
 
+def init_remote(remote, user, password, priv_key, port) -> Tuple[Shell, Paths]:
+    shell = RemoteShell(remote, user, port, password, priv_key)
+    paths = RemotePaths(shell)
+
+    ok = True
+
+    print("checking remote dependencies...")
+    ok &= check_dependencies(shell, REMOTE_DEPENDENCIES["remote"])
+
+    print("checking local dependencies...")
+    ok &= check_dependencies(shell.local_shell, REMOTE_DEPENDENCIES["local"])
+
+    if not ok:
+        input("WARNING: Some dependencies are missing, press enter to continue...")
+
+    # Push repo to remote
+    repo_dir = REPO_DIR
+
+    with TemporaryDirectory() as tmp_dir:
+        # compress
+        cmd = f"""
+        cd {repo_dir}
+
+        tar -czvf {tmp_dir}/dotfiles2.tar.gz .
+        """
+        shell.local_shell.run(cmd)
+
+        # push
+        shell.put(f"{tmp_dir}/dotfiles2.tar.gz", paths.HOME)
+
+        # remove local
+        os.remove(f"{tmp_dir}/dotfiles2.tar.gz")
+
+    # extract
+    cmd = f"""
+    mkdir -p dotfiles2
+    tar -xzvf dotfiles2.tar.gz -C dotfiles2
+
+    rm dotfiles2.tar.gz
+
+    cd dotfiles2 && ls -l
+    """
+    shell.run(cmd)
+
+    print("dotfiles2 repo successfully pushed to remote machine...")
+
+    return shell, paths
+
+
+def init_local() -> Tuple[Shell, Paths]:
+    shell = LocalShell()
+    paths = LocalPaths()
+
+    if not check_dependencies(shell, LOCAL_DEPENDENCIES):
+        input("WARNING: Some dependencies are missing, press enter to continue...")
+
+
 @click.command()
 @click.option( "--os", "os_type", required=True, type=click.Choice(['linux', 'macos']), help="Operating system" )
 @click.option( "--remote", default=None, type=str, help="Remote hostname or IP address" )
@@ -55,57 +113,10 @@ def main(os_type, remote, user, password, priv_key, port, artifacts_tarball):
 
 
     if remote is not None:
-        shell = RemoteShell(remote, user, port, password, priv_key)
-        paths = RemotePaths(shell)
-
-        ok = True
-
-        print("checking remote dependencies...")
-        ok &= check_dependencies(shell, REMOTE_DEPENDENCIES["remote"])
-
-        print("checking local dependencies...")
-        ok &= check_dependencies(shell.local_shell, REMOTE_DEPENDENCIES["local"])
-
-        if not ok:
-            input("WARNING: Some dependencies are missing, press enter to continue...")
-
-        # Push repo to remote
-        repo_dir = REPO_DIR
-
-        with TemporaryDirectory() as tmp_dir:
-            # compress
-            cmd = f"""
-            cd {repo_dir}
-
-            tar -czvf {tmp_dir}/dotfiles2.tar.gz .
-            """
-            shell.local_shell.run(cmd)
-
-            # push
-            shell.put(f"{tmp_dir}/dotfiles2.tar.gz", paths.HOME)
-
-            # remove local
-            os.remove(f"{tmp_dir}/dotfiles2.tar.gz")
-
-        # extract
-        cmd = f"""
-        mkdir -p dotfiles2
-        tar -xzvf dotfiles2.tar.gz -C dotfiles2
-
-        rm dotfiles2.tar.gz
-
-        cd dotfiles2 && ls -l
-        """
-        shell.run(cmd)
-
-        print("dotfiles2 repo successfully pushed to remote machine...")
+        shell, paths = init_remote(remote, user, password, priv_key, port)
 
     else:
-        shell = LocalShell()
-        paths = LocalPaths()
-
-        if not check_dependencies(shell, LOCAL_DEPENDENCIES):
-            input("WARNING: Some dependencies are missing, press enter to continue...")
+        shell, paths = init_local()
 
 
     if os_type == "macos":
