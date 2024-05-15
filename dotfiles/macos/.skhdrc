@@ -77,7 +77,7 @@
 # ############################################################### #
 
 # restart yabai
-shift + cmd - r : yabai --restart-service
+# shift + cmd - r : yabai --restart-service
 
 # open alacritty
 cmd - return : /opt/homebrew/bin/alacritty msg create-window || open /Applications/Alacritty.app
