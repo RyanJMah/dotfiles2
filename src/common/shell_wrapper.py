@@ -293,3 +293,8 @@ class RemoteShell(Shell):
 
     def _check_dependency(self, dependency: str) -> bool:
         return self.run(f"which {dependency}")
+
+    def get_home(self) -> str:
+        result = self._conn.run("echo $HOME")
+
+        return result.stdout.strip()

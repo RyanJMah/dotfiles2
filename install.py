@@ -1,6 +1,37 @@
+import os
 import click
+from tempfile import TemporaryDirectory
 
-from src.common.main_installation import install_all
+from src.common.shell_wrapper import LocalShell, RemoteShell
+from src.common.app_paths import LocalPaths, RemotePaths
+
+from src.common.dependencies import (
+    check_dependencies,
+    LOCAL_DEPENDENCIES,
+    REMOTE_DEPENDENCIES
+)
+
+from src.linux.platform_install import Linux
+from src.macos.platform_install import MacOS
+
+REPO_DIR = os.path.dirname(os.path.abspath(__file__))
+
+def prompt_user(msg: str) -> bool:
+    while True:
+        user_input = input(f"{msg} [Y/n]: ").strip().lower()
+
+        if user_input in ["y", "n"]:
+            return user_input == "y"
+
+def prompt_user_choice(msg: str, choices: list) -> str:
+    while True:
+        user_input = input(f"{msg} {choices}: ").strip().lower()
+
+        if user_input in choices:
+            return user_input
+
+        print(f"Invalid choice: {user_input}")
+
 
 @click.command()
 @click.option( "--os", "os_type", required=True, type=click.Choice(['linux', 'macos']), help="Operating system" )
@@ -9,12 +40,123 @@ from src.common.main_installation import install_all
 @click.option( "--password", default=None, type=str, help="Remote password" )
 @click.option( "--priv-key", default=None, type=str, help="Remote ssh private key" )
 @click.option( "--port", default=22, type=int, help="Remote port" )
-def main(os_type, remote, user, password, priv_key, port):
-    print(f"OS Type: {os_type}...")
+@click.option( "--artifacts-tarball", default=None, type=str, help="Path to the artifacts tarball" )
+def main(os_type, remote, user, password, priv_key, port, artifacts_tarball):
+    # Validate arguments
 
+    # Only linux and macos are supported
     assert( os_type in ["linux", "macos"] )
 
-    install_all(os_type, remote, user, password, priv_key, port)
+    # Cannot be both remote and artifacts-tarball
+    assert( (remote is None) or (artifacts_tarball is None) )
+
+    # If remote is specified, user must be specified
+    assert( (remote is None) or (user is not None) )
+
+
+    if remote is not None:
+        shell = RemoteShell(remote, user, port, password, priv_key)
+        paths = RemotePaths(shell)
+
+        ok = True
+
+        print("checking remote dependencies...")
+        ok &= check_dependencies(shell, REMOTE_DEPENDENCIES["remote"])
+
+        print("checking local dependencies...")
+        ok &= check_dependencies(shell.local_shell, REMOTE_DEPENDENCIES["local"])
+
+        if not ok:
+            input("WARNING: Some dependencies are missing, press enter to continue...")
+
+        # Push repo to remote
+        repo_dir = REPO_DIR
+
+        with TemporaryDirectory() as tmp_dir:
+            # compress
+            cmd = f"""
+            cd {repo_dir}
+
+            tar -czvf {tmp_dir}/dotfiles2.tar.gz .
+            """
+            shell.local_shell.run(cmd)
+
+            # push
+            shell.put(f"{tmp_dir}/dotfiles2.tar.gz", paths.HOME)
+
+            # remove local
+            os.remove(f"{tmp_dir}/dotfiles2.tar.gz")
+
+        # extract
+        cmd = f"""
+        mkdir -p dotfiles2
+        tar -xzvf dotfiles2.tar.gz -C dotfiles2
+
+        rm dotfiles2.tar.gz
+
+        cd dotfiles2 && ls -l
+        """
+        shell.run(cmd)
+
+        print("dotfiles2 repo successfully pushed to remote machine...")
+
+    else:
+        shell = LocalShell()
+        paths = LocalPaths()
+
+        if not check_dependencies(shell, LOCAL_DEPENDENCIES):
+            input("WARNING: Some dependencies are missing, press enter to continue...")
+
+
+    if os_type == "macos":
+        platform = MacOS(shell, paths)
+    else:
+        platform = Linux(shell, paths)
+
+
+    if prompt_user("Install shell configuration?"):
+        platform.install_aliases()
+
+        shell_choice = prompt_user_choice("Choose shell", ["oh-my-zsh", "minimal"])
+
+        if shell_choice == "oh-my-zsh":
+            platform.install_oh_my_zsh_conf()
+        
+        elif shell_choice == "minimal":
+            platform.install_minimal_shell_conf()
+
+
+    if prompt_user("Install Neovim?"):
+        platform.install_nvim()
+
+
+    if prompt_user("Install Neovim configuration?"):
+        platform.install_nvim_conf()
+
+
+    if prompt_user("Install Tmux?"):
+        platform.install_tmux()
+
+
+    if prompt_user("Install Tmux configuration?"):
+        platform.install_tmux_conf()
+
+
+    if prompt_user("Install VSCode configuration?"):
+        platform.install_vscode_conf()
+
+
+    if prompt_user("Install VSCode extensions?"):
+        platform.install_vscode_extensions()
+
+
+    if prompt_user("Install misc. configurations?"):
+        platform.install_misc()
+
+
+    if prompt_user("Run platform specific installation?"):
+        platform.platform_specific_install()
+
 
 if __name__ == '__main__':
     main()

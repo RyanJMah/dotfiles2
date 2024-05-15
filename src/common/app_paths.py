@@ -1,5 +1,6 @@
 import os
 from abc import ABC, abstractmethod
+from shell_wrapper import RemoteShell
 
 THIS_DIR      = os.path.dirname(os.path.abspath(__file__))
 SRC_DIR       = os.path.dirname(THIS_DIR)
@@ -18,12 +19,14 @@ class Paths(ABC):
         pass
 
     def __init__(self):
-
         self.SRC_DIR             = os.path.join(self.ROOT_DIR, "src")
         self.DOTFILES_DIR        = os.path.join(self.ROOT_DIR, "dotfiles")
         self.DOTFILES_COMMON_DIR = os.path.join(self.DOTFILES_DIR, "common")
         self.DOTFILES_LINUX_DIR  = os.path.join(self.DOTFILES_DIR, "linux")
         self.DOTFILES_MACOS_DIR  = os.path.join(self.DOTFILES_DIR, "macos")
+
+        self.BUILD_DIR = os.path.join(self.HOME, "dotfiles2_build")
+
 
 class LocalPaths(Paths):
     @property
@@ -39,17 +42,14 @@ class RemotePaths(Paths):
     """
     In the remote case, we will scp dotfiles2 to $HOME on the remote machine. 
     """
-    def __init__(self, user):
-        self.user = user
+    def __init__(self, remote_shell: RemoteShell):
+        self._home = remote_shell.get_home()
 
         super().__init__()
 
     @property
     def HOME(self):
-        if self.user == "root":
-            return "/root"
-        else:
-            return f"/home/{self.user}"
+        return self._home
 
     @property
     def ROOT_DIR(self):

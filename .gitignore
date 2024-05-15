@@ -7,3 +7,5 @@ Build
 VM.bundle
 
 .mypy_cache
+
+.venv
