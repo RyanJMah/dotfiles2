@@ -12,8 +12,8 @@ from src.common.dependencies import (
     REMOTE_DEPENDENCIES
 )
 
-from src.linux.platform_install import Linux
-from src.macos.platform_install import MacOS
+from src.linux.linux_install import Linux
+from src.macos.macos_install import MacOS
 
 REPO_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -89,6 +89,9 @@ def init_local() -> Tuple[Shell, Paths]:
 
     if not check_dependencies(shell, LOCAL_DEPENDENCIES):
         input("WARNING: Some dependencies are missing, press enter to continue...")
+
+    return shell, paths
+
 
 
 @click.command()

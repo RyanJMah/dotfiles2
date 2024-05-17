@@ -30,7 +30,7 @@ class Linux(Platform):
         }
 
     def platform_specific_install(self):
-        print("running platform specific install for linux...")
+        pass
 
     def install_aliases(self):
         super().install_aliases()

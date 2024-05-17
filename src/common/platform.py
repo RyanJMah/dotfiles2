@@ -54,9 +54,11 @@ class Platform(ABC):
 
 
         if not os.path.exists(f"{self.paths.HOME}/.oh-my-zsh"):
-            self.install_url("https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh")
+            self.install_url("https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh", self.paths.BUILD_DIR)
 
             cmd = f"""
+            cd {self.paths.BUILD_DIR}
+            
             sh install.sh --unattended
             rm install.sh
             """
@@ -93,9 +95,11 @@ class Platform(ABC):
 
 
     def install_nvim(self):
-        self.install_url( self.get_nvim_download_url() )
+        self.install_url( self.get_nvim_download_url(), self.paths.BUILD_DIR )
 
         cmd = f"""
+        cd {self.paths.BUILD_DIR}
+
         tar -xzf nvim-*.tar.gz
 
         rm nvim-*.tar.gz
@@ -143,12 +147,16 @@ class Platform(ABC):
 
 
         # Install plugin dependencies
-        self.install_url( self.get_ripgrep_download_url() )
-        self.install_url( "https://raw.githubusercontent.com/vim/vim/master/src/xxd/xxd.c",    "tmp" )
-        self.install_url( "https://raw.githubusercontent.com/vim/vim/master/src/xxd/Makefile", "tmp" )
+        self.install_url( self.get_ripgrep_download_url(), self.paths.BUILD_DIR )
+
+        xxd_dir = os.path.join(self.paths.BUILD_DIR, "xxd")
+        self.install_url( "https://raw.githubusercontent.com/vim/vim/master/src/xxd/xxd.c",    xxd_dir )
+        self.install_url( "https://raw.githubusercontent.com/vim/vim/master/src/xxd/Makefile", xxd_dir )
 
         cmd = f"""
         set -e
+
+        cd {self.paths.BUILD_DIR}
 
         # ripgrep
         tar -zxf ripgrep-*.tar.gz
@@ -166,12 +174,9 @@ class Platform(ABC):
 
 
         # xxd (build from source)
-        cd tmp
+        cd {xxd_dir}
         make
         mv xxd {self.paths.HOME}/.local/bin
-
-        cd ..
-        rm -r tmp
         """
         self.exec_bash(cmd)
 
@@ -202,7 +207,11 @@ class Platform(ABC):
             self.exec_bash(cmd)
 
         # Install my own custom theme
-        self.install_url("https://github.com/RyanJMah/Ryan-VSCode-Theme/releases/download/2.0.0/ryan-vscode-theme-2.0.0.vsix")
+        self.install_url(
+            "https://github.com/RyanJMah/Ryan-VSCode-Theme/releases/download/2.0.0/ryan-vscode-theme-2.0.0.vsix",
+            self.paths.BUILD_DIR
+        )
+
         cmd = f"""
         {code} --install-extension ryan-vscode-theme-2.0.0.vsix
         rm ryan-vscode-theme-2.0.0.vsix
@@ -220,13 +229,27 @@ class Platform(ABC):
         ncurses_flags  = configure_flags.get("ncurses", "")
         tmux_flags     = configure_flags.get("tmux", "")
 
-        self.install_url("https://pkg-config.freedesktop.org/releases/pkg-config-0.29.2.tar.gz")
-        self.install_url("https://github.com/libevent/libevent/releases/download/release-2.1.12-stable/libevent-2.1.12-stable.tar.gz")
-        self.install_url("https://ftp.gnu.org/gnu/ncurses/ncurses-6.3.tar.gz")
-        self.install_url("https://github.com/tmux/tmux/releases/download/3.4/tmux-3.4.tar.gz")
+        self.install_url(
+            "https://pkg-config.freedesktop.org/releases/pkg-config-0.29.2.tar.gz",
+            self.paths.BUILD_DIR
+        )
+        self.install_url(
+            "https://github.com/libevent/libevent/releases/download/release-2.1.12-stable/libevent-2.1.12-stable.tar.gz",
+            self.paths.BUILD_DIR
+        )
+        self.install_url(
+            "https://ftp.gnu.org/gnu/ncurses/ncurses-6.3.tar.gz",
+            self.paths.BUILD_DIR
+        )
+        self.install_url(
+            "https://github.com/tmux/tmux/releases/download/3.4/tmux-3.4.tar.gz",
+            self.paths.BUILD_DIR
+        )
 
         cmd = f"""
         set -e
+
+        cd {self.paths.BUILD_DIR}
 
         INSTALL_DIR={install_dir}
         mkdir -p $INSTALL_DIR

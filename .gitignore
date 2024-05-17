@@ -4,8 +4,11 @@ __pycache__
 neovim
 
 Build
+build
 VM.bundle
 
 .mypy_cache
 
 .venv
+
+artifacts*

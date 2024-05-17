@@ -25,7 +25,7 @@ class Paths(ABC):
         self.DOTFILES_LINUX_DIR  = os.path.join(self.DOTFILES_DIR, "linux")
         self.DOTFILES_MACOS_DIR  = os.path.join(self.DOTFILES_DIR, "macos")
 
-        self.BUILD_DIR = os.path.join(self.HOME, "dotfiles2_build")
+        self.BUILD_DIR = os.path.join(self.ROOT_DIR, "build")
 
 
 class LocalPaths(Paths):

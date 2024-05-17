@@ -30,9 +30,16 @@ class MacOS(Platform):
 
     def install_tmux(self):
         # Install utf8proc first
+        self.install_url(
+            "https://github.com/JuliaStrings/utf8proc/releases/download/v2.9.0/utf8proc-2.9.0.tar.gz",
+            self.paths.BUILD_DIR
+        )
+
         cmd = f"""
         set -e
-        curl -LO https://github.com/JuliaStrings/utf8proc/releases/download/v2.9.0/utf8proc-2.9.0.tar.gz
+        
+        cd {self.paths.BUILD_DIR}
+
         tar -xzf utf8proc-*.tar.gz
 
         cd utf8proc-*
