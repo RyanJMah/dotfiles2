@@ -211,8 +211,7 @@ class Platform(ABC):
         )
 
         cmd = f"""
-        {code} --install-extension ryan-vscode-theme-2.0.0.vsix
-        rm ryan-vscode-theme-2.0.0.vsix
+        {code} --install-extension {self.paths.BUILD_DIR}/ryan-vscode-theme-2.0.0.vsix
         """
         self.exec_bash(cmd)
 
