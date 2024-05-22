@@ -62,7 +62,19 @@ docker run                  \
     -p 2222:22              \
     $IMAGE_NAME
 
+
+STARTING_DIR=/home/testuser/dotfiles2
+
+if [[ $WITH_SSH -eq 1 ]]; then
+    docker exec -it $CONTAINER_NAME bash -c "sudo ~/ssh_server.sh"
+
+    # If with ssh, want to test the remote scripts, so remove the local dotfiles2 directory
+    docker exec -it $CONTAINER_NAME bash -c "rm -rf ~/dotfiles2"
+
+    STARTING_DIR=/home/testuser
+fi
+
 # Attach to the container's shell, start in the home directory
 set +e
-docker exec -it $CONTAINER_NAME bash -c "cd ~/dotfiles2 && bash"
+docker exec -it $CONTAINER_NAME bash -c "cd ${STARTING_DIR} && bash"
 set -e

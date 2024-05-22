@@ -51,6 +51,24 @@ class Shell(ABC):
         return self._check_dependency(dependency)
 
 
+    def symlink_dir_files(self, src: str, dst: str):
+        """
+        Symlinks every file in src to dst, instead of just
+        symlinking the directory itself
+        """
+
+        cmd = f"""
+        for f in "{src}"/*; do
+            # Extract the basename of the file (the filename without the path)
+            f_name="${{f##*/}}"
+
+            # Create a symbolic link in the dst directory
+            ln -sf "$f" "{dst}/$f_name"
+        done
+        """
+        self.run(cmd)
+
+
 class LocalShell(Shell):
     def run(self, cmd_str: str) -> bool:
         cmd = cmd_str.strip()

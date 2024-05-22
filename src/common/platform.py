@@ -61,11 +61,13 @@ class Platform(ABC):
             
             sh install.sh --unattended
             rm install.sh
+
+            mkdir -p {self.paths.HOME}/.oh-my-zsh/custom/plugins
             """
             self.exec_bash(cmd)
 
             # Install plugins
-            self.shell.clone_git_repo("https://github.com/zsh-users/zsh-syntax-highlighting.git", f"{self.paths.HOME}/.oh-my-zsh/custom/plugins")
+            self.shell.symlink_dir_files(f"{self.paths.DOTFILES_COMMON_DIR}/oh_my_zsh_conf/plugins", f"{self.paths.HOME}/.oh-my-zsh/custom/plugins")
 
         cmd = f"""
         ln -sf {self.paths.DOTFILES_COMMON_DIR}/oh_my_zsh_conf/.zshrc {self.paths.HOME}/.zshrc
@@ -134,16 +136,19 @@ class Platform(ABC):
 
         mkdir -p {plugins_dir}
 
-        # Loop through each file in the submodule plugins directory
-        for plugin in "{submodule_plugins_dir}"/*; do
-            # Extract the basename of the plugin
-            plugin_name="${{plugin##*/}}"
+        # # Loop through each file in the submodule plugins directory
+        # for plugin in "{submodule_plugins_dir}"/*; do
+        #     # Extract the basename of the plugin
+        #     plugin_name="${{plugin##*/}}"
 
-            # Create a symbolic link in the plugins directory pointing to the original plugin file
-            ln -sf $submodule_plugins_dir/$plugin {plugins_dir}/$plugin_name
-        done
+        #     # Create a symbolic link in the plugins directory pointing to the original plugin file
+        #     ln -sf $submodule_plugins_dir/$plugin {plugins_dir}/$plugin_name
+        # done
         """
         self.exec_bash(cmd)
+
+        # Install plugins
+        self.shell.symlink_dir_files(submodule_plugins_dir, plugins_dir)
 
 
         # Install plugin dependencies

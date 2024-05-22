@@ -35,9 +35,10 @@ COPY src /home/testuser/dotfiles2/src
 COPY dotfiles /home/testuser/dotfiles2/dotfiles
 COPY resources /home/testuser/dotfiles2/resources
 
+COPY test_environments/linux/ssh_server.sh /home/testuser/ssh_server.sh
+
 COPY install.py                             \
      quick_install.sh                       \
-     test_environments/linux/ssh_server.sh  \
      /home/testuser/dotfiles2/
 
 

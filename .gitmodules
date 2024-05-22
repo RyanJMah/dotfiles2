@@ -70,3 +70,6 @@
 [submodule "dotfiles/common/nvim_conf/plugins/nvim-cmp"]
 	path = dotfiles/common/nvim_conf/plugins/nvim-cmp
 	url = https://github.com/hrsh7th/nvim-cmp
+[submodule "dotfiles/common/oh_my_zsh_conf/plugins/zsh-syntax-highlighting"]
+	path = dotfiles/common/oh_my_zsh_conf/plugins/zsh-syntax-highlighting
+	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
