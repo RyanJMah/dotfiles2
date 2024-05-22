@@ -12,6 +12,8 @@ class Platform(ABC):
         self.shell = shell
         self.paths = paths
 
+        os.makedirs(self.paths.BUILD_DIR, exist_ok=True)
+
     def exec_bash(self, cmd_str):
         self.shell.run(cmd_str)
 
