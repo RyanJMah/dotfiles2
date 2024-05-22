@@ -137,15 +137,6 @@ class Platform(ABC):
         ln -sf {self.paths.DOTFILES_COMMON_DIR}/nvim_conf/.vscode-vimrc.vim   {self.paths.HOME}/.vscode-vimrc.vim
 
         mkdir -p {plugins_dir}
-
-        # # Loop through each file in the submodule plugins directory
-        # for plugin in "{submodule_plugins_dir}"/*; do
-        #     # Extract the basename of the plugin
-        #     plugin_name="${{plugin##*/}}"
-
-        #     # Create a symbolic link in the plugins directory pointing to the original plugin file
-        #     ln -sf $submodule_plugins_dir/$plugin {plugins_dir}/$plugin_name
-        # done
         """
         self.exec_bash(cmd)
 
