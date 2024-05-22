@@ -12,7 +12,7 @@ class Platform(ABC):
         self.shell = shell
         self.paths = paths
 
-        os.makedirs(self.paths.BUILD_DIR, exist_ok=True)
+        self.exec_bash(f"mkdir -p {self.paths.BUILD_DIR}")
 
     def exec_bash(self, cmd_str):
         self.shell.run(cmd_str)
