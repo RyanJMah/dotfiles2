@@ -62,6 +62,11 @@ class Shell(ABC):
             # Extract the basename of the file (the filename without the path)
             f_name="${{f##*/}}"
 
+            # If the symlink already exists, remove it
+            if [ -L "{dst}/$f_name" ]; then
+                rm -r "{dst}/$f_name"
+            fi
+            
             # Create a symbolic link in the dst directory
             ln -sf "$f" "{dst}/$f_name"
         done
