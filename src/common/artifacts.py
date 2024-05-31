@@ -1,3 +1,4 @@
+import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Dict, Generic, TypeVar, Type
@@ -25,7 +26,7 @@ class RemoteArtifact(Artifact):
 
 class LocalArtifact(Artifact):
     def __init__(self, path: str):
-        self._path = path
+        self._path = os.path.abspath(path)
 
     @property
     def url(self) -> str:

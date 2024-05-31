@@ -1,3 +1,4 @@
+import click
 from artifacts import TargetArtifacts
 
 __OH_MY_ZSH_INSTALL_SH = "https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh"
@@ -58,4 +59,50 @@ MACOS_DOWNLOADABLE_ARTIFACTS = TargetArtifacts( oh_my_zsh_install_sh = __OH_MY_Z
                                                     "utf8proc": __UTF8PROC_TARBALL
                                                 } )
 
+@click.command()
+@click.option("--os-type", type=click.Choice(["linux", "macos"]), required=True)
+def __generate_artifacts_tarball(os_type):
+    import os
+    from dataclasses import fields
 
+    from app_paths import LocalPaths
+    from artifacts import RemoteArtifact
+    from shell_wrapper import LocalShell
+
+    paths = LocalPaths()
+    shell = LocalShell()
+    
+    if os_type == "linux":
+        target_artifacts = TargetArtifacts.from_target_urls(LINUX_DOWNLOADABLE_ARTIFACTS, RemoteArtifact)
+    else:
+        target_artifacts = TargetArtifacts.from_target_urls(MACOS_DOWNLOADABLE_ARTIFACTS, RemoteArtifact)
+
+    # Create the artifacts bundle directory
+    bundle_dir = os.path.join(paths.BUILD_DIR, "artifacts_bundle")
+    os.makedirs(bundle_dir, exist_ok=True)
+
+    def download_artifact(artifact: RemoteArtifact):
+        print(f"Downloading {artifact.url} -> {bundle_dir}/{artifact.filename}")
+        shell.install(artifact.url, bundle_dir)
+
+
+    for field in fields(target_artifacts):
+        fieldname = field.name
+        field_obj = getattr(target_artifacts, fieldname)
+
+        if isinstance(field_obj, dict):
+            for _, artifact in field_obj.items():
+                download_artifact(artifact)
+
+        else:
+            download_artifact(field_obj)
+
+    # Create the tarball
+    tarball_filename = os.path.join(paths.BUILD_DIR, "artifacts_bundle.tar.gz")
+    shell.run(f"tar -cvzf {tarball_filename} -C {bundle_dir} .")
+
+    print(f"Artifacts tarball created: {tarball_filename}")
+
+
+if __name__ == "__main__":
+    __generate_artifacts_tarball()
