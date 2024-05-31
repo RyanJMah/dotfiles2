@@ -6,11 +6,13 @@ from tempfile import TemporaryDirectory
 
 from app_paths import Paths, RESOURCES_DIR
 from shell_wrapper import Shell
+from artifacts import TargetArtifacts, Artifact
 
 class Platform(ABC):
-    def __init__(self, shell: Shell, paths: Paths):
+    def __init__(self, shell: Shell, paths: Paths, target_artifacts: TargetArtifacts):
         self.shell = shell
         self.paths = paths
+        self.artifacts = target_artifacts
 
         self.exec_bash(f"mkdir -p {self.paths.BUILD_DIR}")
 
@@ -22,10 +24,6 @@ class Platform(ABC):
 
     ##############################################################################
     @abstractmethod
-    def get_nvim_download_url(self) -> str:
-        pass
-
-    @abstractmethod
     def platform_specific_install(self):
         pass
 
@@ -35,10 +33,6 @@ class Platform(ABC):
 
     @abstractmethod
     def get_code_conf_dir(self) -> str:
-        pass
-
-    @abstractmethod
-    def get_ripgrep_download_url(self) -> str:
         pass
 
     # Can override
@@ -56,7 +50,7 @@ class Platform(ABC):
 
 
         if not os.path.exists(f"{self.paths.HOME}/.oh-my-zsh"):
-            self.install_url("https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh", self.paths.BUILD_DIR)
+            self.install_url(self.artifacts.oh_my_zsh_install_sh.url, self.paths.BUILD_DIR)
 
             cmd = f"""
             cd {self.paths.BUILD_DIR}
@@ -70,6 +64,7 @@ class Platform(ABC):
 
             # Install plugins
             self.shell.symlink_dir_files(f"{self.paths.DOTFILES_COMMON_DIR}/oh_my_zsh_conf/plugins", f"{self.paths.HOME}/.oh-my-zsh/custom/plugins")
+
 
         cmd = f"""
         ln -sf {self.paths.DOTFILES_COMMON_DIR}/oh_my_zsh_conf/.zshrc {self.paths.HOME}/.zshrc
@@ -99,7 +94,7 @@ class Platform(ABC):
 
 
     def install_nvim(self):
-        self.install_url( self.get_nvim_download_url(), self.paths.BUILD_DIR )
+        self.install_url( self.artifacts.nvim_tarball.url, self.paths.BUILD_DIR )
 
         cmd = f"""
         cd {self.paths.BUILD_DIR}
@@ -145,11 +140,11 @@ class Platform(ABC):
 
 
         # Install plugin dependencies
-        self.install_url( self.get_ripgrep_download_url(), self.paths.BUILD_DIR )
+        self.install_url( self.artifacts.ripgrep_tarball.url, self.paths.BUILD_DIR )
 
         xxd_dir = os.path.join(self.paths.BUILD_DIR, "xxd")
-        self.install_url( "https://raw.githubusercontent.com/vim/vim/master/src/xxd/xxd.c",    xxd_dir )
-        self.install_url( "https://raw.githubusercontent.com/vim/vim/master/src/xxd/Makefile", xxd_dir )
+        self.install_url( self.artifacts.xxd_c.url,        xxd_dir )
+        self.install_url( self.artifacts.xxd_makefile.url, xxd_dir )
 
         cmd = f"""
         set -e
@@ -205,13 +200,11 @@ class Platform(ABC):
             self.exec_bash(cmd)
 
         # Install my own custom theme
-        self.install_url(
-            "https://github.com/RyanJMah/Ryan-VSCode-Theme/releases/download/2.0.0/ryan-vscode-theme-2.0.0.vsix",
-            self.paths.BUILD_DIR
-        )
+        self.install_url( self.artifacts.ryan_vscode_theme_vsix.url,
+                          self.paths.BUILD_DIR )
 
         cmd = f"""
-        {code} --install-extension {self.paths.BUILD_DIR}/ryan-vscode-theme-2.0.0.vsix
+        {code} --install-extension {self.paths.BUILD_DIR}/ryan-vscode-theme-*.vsix
         """
         self.exec_bash(cmd)
 
@@ -226,22 +219,17 @@ class Platform(ABC):
         ncurses_flags  = configure_flags.get("ncurses", "")
         tmux_flags     = configure_flags.get("tmux", "")
 
-        self.install_url(
-            "https://pkg-config.freedesktop.org/releases/pkg-config-0.29.2.tar.gz",
-            self.paths.BUILD_DIR
-        )
-        self.install_url(
-            "https://github.com/libevent/libevent/releases/download/release-2.1.12-stable/libevent-2.1.12-stable.tar.gz",
-            self.paths.BUILD_DIR
-        )
-        self.install_url(
-            "https://ftp.gnu.org/gnu/ncurses/ncurses-6.3.tar.gz",
-            self.paths.BUILD_DIR
-        )
-        self.install_url(
-            "https://github.com/tmux/tmux/releases/download/3.4/tmux-3.4.tar.gz",
-            self.paths.BUILD_DIR
-        )
+        self.install_url( self.artifacts.pkg_config_tarball.url,
+                          self.paths.BUILD_DIR )
+
+        self.install_url( self.artifacts.libevent_tarball.url,
+                          self.paths.BUILD_DIR )
+
+        self.install_url( self.artifacts.ncurses_tarball.url,
+                          self.paths.BUILD_DIR )
+
+        self.install_url( self.artifacts.tmux_tarball.url,
+                          self.paths.BUILD_DIR )
 
         cmd = f"""
         set -e

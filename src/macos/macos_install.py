@@ -9,9 +9,6 @@ sys.path.append(SRC_DIR)
 from common.platform import Platform
 
 class MacOS(Platform):
-    def get_nvim_download_url(self) -> str:
-        return "https://github.com/neovim/neovim/releases/download/v0.9.5/nvim-macos.tar.gz"
-
     def get_code_conf_dir(self) -> str:
         return f"{self.paths.HOME}/Library/Application\\ Support/Code/User"
 
@@ -30,10 +27,8 @@ class MacOS(Platform):
 
     def install_tmux(self):
         # Install utf8proc first
-        self.install_url(
-            "https://github.com/JuliaStrings/utf8proc/releases/download/v2.9.0/utf8proc-2.9.0.tar.gz",
-            self.paths.BUILD_DIR
-        )
+        self.install_url( self.artifacts.platform_artifacts["utf8proc"].url,
+                          self.paths.BUILD_DIR )
 
         cmd = f"""
         set -e

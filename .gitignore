@@ -10,5 +10,3 @@ VM.bundle
 .mypy_cache
 
 .venv
-
-artifacts*

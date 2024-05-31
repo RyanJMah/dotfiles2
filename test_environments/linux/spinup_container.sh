@@ -40,8 +40,9 @@ done
 cd ../../
 
 set +e
-docker buildx create --use --name mybuilder --driver docker-container --buildkitd-flags '--allow-insecure-entitlement security.insecure'
-docker buildx inspect --bootstrap
+# stderr > /dev/null
+docker buildx create --use --name mybuilder --driver docker-container --buildkitd-flags '--allow-insecure-entitlement security.insecure' > /dev/null 2>&1
+docker buildx inspect --bootstrap > /dev/null 2>&1
 set -e
 
 # Build the Docker image

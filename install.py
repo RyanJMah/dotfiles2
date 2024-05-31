@@ -1,10 +1,12 @@
 import os
+import sys
 import click
 from typing import Tuple
 from tempfile import TemporaryDirectory
 
 from src.common.shell_wrapper import LocalShell, RemoteShell, Shell
 from src.common.app_paths import LocalPaths, RemotePaths, Paths
+from src.common.artifacts import Artifact, RemoteArtifact, LocalArtifact, TargetArtifacts
 
 from src.common.dependencies import (
     check_dependencies,
@@ -15,7 +17,30 @@ from src.common.dependencies import (
 from src.linux.linux_install import Linux
 from src.macos.macos_install import MacOS
 
+from src.common.artifact_urls import (
+    OH_MY_ZSH_INSTALL_SH,
+
+    NVIM_TARBALL_LINUX,
+    NVIM_TARBALL_MACOS,
+
+    RIPGREP_TARBALL_LINUX,
+    RIPGREP_TARBALL_MACOS,
+
+    XXD_C,
+    XXD_MAKEFILE,
+
+    RYAN_VSCODE_THEME_VSIX,
+
+    PKG_CONFIG_TARBALL,
+    LIBEVENT_TARBALL,
+    NCURSES_TARBALL,
+    TMUX_TARBALL,
+
+    UTF8PROC_TARBALL
+)
+
 REPO_DIR = os.path.dirname(os.path.abspath(__file__))
+
 
 def prompt_user(msg: str) -> bool:
     while True:
@@ -93,6 +118,47 @@ def init_local() -> Tuple[Shell, Paths]:
     return shell, paths
 
 
+def init_downloadable_artifacts(os_type) -> TargetArtifacts:
+    nvim_tarball: str
+    ripgrep_tarball: str
+
+    if os_type == "linux":
+        nvim_tarball = NVIM_TARBALL_LINUX
+        ripgrep_tarball = RIPGREP_TARBALL_LINUX
+        platform_artifacts = {}
+    else:
+        nvim_tarball = NVIM_TARBALL_MACOS
+        ripgrep_tarball = RIPGREP_TARBALL_MACOS
+        platform_artifacts = {
+            "utf8proc": RemoteArtifact(UTF8PROC_TARBALL)
+        }
+
+    return TargetArtifacts(
+        oh_my_zsh_install_sh = RemoteArtifact(OH_MY_ZSH_INSTALL_SH),
+
+        nvim_tarball = RemoteArtifact(nvim_tarball),
+        ripgrep_tarball = RemoteArtifact(ripgrep_tarball),
+
+        xxd_c = RemoteArtifact(XXD_C),
+        xxd_makefile = RemoteArtifact(XXD_MAKEFILE),
+
+        ryan_vscode_theme_vsix = RemoteArtifact(RYAN_VSCODE_THEME_VSIX),
+
+        pkg_config_tarball = RemoteArtifact(PKG_CONFIG_TARBALL),
+        libevent_tarball = RemoteArtifact(LIBEVENT_TARBALL),
+        ncurses_tarball = RemoteArtifact(NCURSES_TARBALL),
+        tmux_tarball = RemoteArtifact(TMUX_TARBALL),
+
+        platform_artifacts = platform_artifacts
+    )
+
+def init_bundled_artifacts(os_type, shell, artifacts_tarball) -> TargetArtifacts:
+    nvim_tarball: str
+    ripgrep_tarball: str
+
+    pass
+
+
 
 @click.command()
 @click.option( "--os", "os_type", required=True, type=click.Choice(['linux', 'macos']), help="Operating system" )
@@ -122,10 +188,18 @@ def main(os_type, remote, user, password, priv_key, port, artifacts_tarball):
         shell, paths = init_local()
 
 
-    if os_type == "macos":
-        platform = MacOS(shell, paths)
+    if artifacts_tarball is None:
+        # Downloadable artifacts
+        target_artifacts = init_downloadable_artifacts(os_type)
     else:
-        platform = Linux(shell, paths)
+        # Bundled artifacts
+        target_artifacts = init_bundled_artifacts(os_type, shell, artifacts_tarball)
+
+
+    if os_type == "macos":
+        platform = MacOS(shell, paths, target_artifacts)
+    else:
+        platform = Linux(shell, paths, target_artifacts)
 
 
     if prompt_user("Install shell configuration?"):

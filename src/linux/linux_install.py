@@ -10,17 +10,11 @@ sys.path.append(SRC_DIR)
 from common.platform import Platform
 
 class Linux(Platform):
-    def get_nvim_download_url(self) -> str:
-        return "https://github.com/neovim/neovim/releases/download/v0.9.5/nvim-linux64.tar.gz"
-
     def get_code_cmd(self) -> str:
         return "/usr/bin/code"
 
     def get_code_conf_dir(self) -> str:
         return f"{self.paths.HOME}/.config/Code/User"
-
-    def get_ripgrep_download_url(self) -> str:
-        return "https://github.com/BurntSushi/ripgrep/releases/download/14.1.0/ripgrep-14.1.0-x86_64-unknown-linux-musl.tar.gz"
 
     def platform_tmux_configure_flags(self) -> Dict[str, str]:
         return {
