@@ -25,8 +25,8 @@ class RemoteArtifact(Artifact):
         return self._url
 
 class LocalArtifact(Artifact):
-    def __init__(self, path: str):
-        self._path = os.path.abspath(path)
+    def __init__(self, file_dir: str, filename: str):
+        self._path = os.path.join(os.path.abspath(file_dir), filename)
 
     @property
     def url(self) -> str:

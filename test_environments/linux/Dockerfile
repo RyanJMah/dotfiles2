@@ -34,6 +34,7 @@ RUN pip3 install -r /home/testuser/dotfiles2/requirements.txt
 COPY src /home/testuser/dotfiles2/src
 COPY dotfiles /home/testuser/dotfiles2/dotfiles
 COPY resources /home/testuser/dotfiles2/resources
+COPY build /home/testuser/dotfiles2/build
 
 COPY test_environments/linux/ssh_server.sh /home/testuser/ssh_server.sh
 

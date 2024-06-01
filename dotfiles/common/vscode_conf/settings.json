@@ -37,7 +37,7 @@
 
     "editor.glyphMargin": true,
     // "editor.cursorSmoothCaretAnimation": "on",
-    // "editor.smoothScrolling": true,
+    "editor.smoothScrolling": true,
     "editor.tabCompletion": "on",
     "editor.acceptSuggestionOnEnter": "smart",
     "editor.scrollBeyondLastLine": true,

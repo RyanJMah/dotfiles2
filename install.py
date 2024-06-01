@@ -19,7 +19,9 @@ from src.macos.macos_install import MacOS
 
 from src.common.artifact_urls import (
     LINUX_DOWNLOADABLE_ARTIFACTS,
-    MACOS_DOWNLOADABLE_ARTIFACTS
+    MACOS_DOWNLOADABLE_ARTIFACTS,
+    LINUX_LOCAL_ARTIFACTS,
+    MACOS_LOCAL_ARTIFACTS
 )
 
 REPO_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -121,6 +123,12 @@ def main(os_type, remote, user, password, priv_key, port, artifacts_tarball):
     # If remote is specified, user must be specified
     assert( (remote is None) or (user is not None) )
 
+    # Remote only supported on linux
+    assert( (remote is None) or (os_type == "linux") )
+
+    # Make sure tarball is .tar.gz
+    assert( (artifacts_tarball is None) or (artifacts_tarball.endswith(".tar.gz")) )
+
 
     if remote is not None:
         shell, paths = init_remote(remote, user, password, priv_key, port)
@@ -129,17 +137,41 @@ def main(os_type, remote, user, password, priv_key, port, artifacts_tarball):
         shell, paths = init_local()
 
 
-    if artifacts_tarball is None:
-        artifacts_class = RemoteArtifact        
-    else:
-        artifacts_class = LocalArtifact
+    tarball_dir: str
+
+    # Extract artifacts tarball
+    if artifacts_tarball is not None:
+        # get the name of the tarball without .tar.gz
+        tarball_name = os.path.basename(artifacts_tarball).replace(".tar.gz", "")
+
+        # Create the directory to extract the tarball
+        tarball_dir = os.path.join(paths.BUILD_DIR, tarball_name)
+        os.makedirs(tarball_dir, exist_ok=True)
+
+        # Extract the tarball
+        shell.run(f"tar -xvzf {artifacts_tarball} -C {paths.BUILD_DIR}/{tarball_name}")
+
 
     if os_type == "macos":
-        target_artifacts = TargetArtifacts.from_target_urls(MACOS_DOWNLOADABLE_ARTIFACTS, artifacts_class)
+        if artifacts_tarball is None:
+            # Downloadable artifacts
+            target_artifacts = TargetArtifacts.from_target_urls(MACOS_DOWNLOADABLE_ARTIFACTS, RemoteArtifact)
+        else:
+            # Local artifacts
+            target_artifacts = TargetArtifacts.from_target_urls( MACOS_LOCAL_ARTIFACTS,
+                                                                 lambda filename: LocalArtifact(tarball_dir, filename) )
+
         platform = MacOS(shell, paths, target_artifacts)
 
     else:
-        target_artifacts = TargetArtifacts.from_target_urls(LINUX_DOWNLOADABLE_ARTIFACTS, artifacts_class)
+        if artifacts_tarball is None:
+            # Downloadable artifacts
+            target_artifacts = TargetArtifacts.from_target_urls(LINUX_DOWNLOADABLE_ARTIFACTS, RemoteArtifact)
+        else:
+            # Local artifacts
+            target_artifacts = TargetArtifacts.from_target_urls( LINUX_LOCAL_ARTIFACTS,
+                                                                 lambda filename: LocalArtifact(tarball_dir, filename) )
+
         platform = Linux(shell, paths, target_artifacts)
 
 

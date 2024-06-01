@@ -26,8 +26,8 @@ __UTF8PROC_TARBALL = "https://github.com/JuliaStrings/utf8proc/releases/download
 LINUX_DOWNLOADABLE_ARTIFACTS = TargetArtifacts( oh_my_zsh_install_sh = __OH_MY_ZSH_INSTALL_SH,
 
                                                 nvim_tarball = __NVIM_TARBALL_LINUX,
-                                                ripgrep_tarball = __RIPGREP_TARBALL_LINUX,
 
+                                                ripgrep_tarball = __RIPGREP_TARBALL_LINUX,
                                                 xxd_c = __XXD_C,
                                                 xxd_makefile = __XXD_MAKEFILE,
 
@@ -40,11 +40,29 @@ LINUX_DOWNLOADABLE_ARTIFACTS = TargetArtifacts( oh_my_zsh_install_sh = __OH_MY_Z
 
                                                 platform_artifacts = {} )
 
+LINUX_LOCAL_ARTIFACTS = TargetArtifacts( oh_my_zsh_install_sh = "install.sh",
+                                         
+                                         nvim_tarball = "nvim-linux64.tar.gz",
+
+                                         ripgrep_tarball = "ripgrep-14.1.0-x86_64-unknown-linux-musl.tar.gz",
+                                         xxd_c = "xxd.c",
+                                         xxd_makefile = "Makefile",
+
+                                         ryan_vscode_theme_vsix = "ryan-vscode-theme-2.0.0.vsix",
+
+                                         pkg_config_tarball = "pkg-config-0.29.2.tar.gz",
+                                         libevent_tarball = "libevent-2.1.12-stable.tar.gz",
+                                         ncurses_tarball = "ncurses-6.3.tar.gz",
+                                         tmux_tarball = "tmux-3.4.tar.gz",
+
+                                         platform_artifacts = {} )
+
+
 MACOS_DOWNLOADABLE_ARTIFACTS = TargetArtifacts( oh_my_zsh_install_sh = __OH_MY_ZSH_INSTALL_SH,
 
                                                 nvim_tarball = __NVIM_TARBALL_MACOS,
-                                                ripgrep_tarball = __RIPGREP_TARBALL_MACOS,
 
+                                                ripgrep_tarball = __RIPGREP_TARBALL_MACOS,
                                                 xxd_c = __XXD_C,
                                                 xxd_makefile = __XXD_MAKEFILE,
 
@@ -58,6 +76,25 @@ MACOS_DOWNLOADABLE_ARTIFACTS = TargetArtifacts( oh_my_zsh_install_sh = __OH_MY_Z
                                                 platform_artifacts = {
                                                     "utf8proc": __UTF8PROC_TARBALL
                                                 } )
+
+MACOS_LOCAL_ARTIFACTS = TargetArtifacts( oh_my_zsh_install_sh = "install.sh",
+                                        
+                                         nvim_tarball = "nvim-macos.tar.gz",
+
+                                         ripgrep_tarball = "ripgrep-14.1.0-aarch64-apple-darwin.tar.gz",
+                                         xxd_c = "xxd.c",
+                                         xxd_makefile = "Makefile",
+
+                                         ryan_vscode_theme_vsix = "ryan-vscode-theme-2.0.0.vsix",
+
+                                         pkg_config_tarball = "pkg-config-0.29.2.tar.gz",
+                                         libevent_tarball = "libevent-2.1.12-stable.tar.gz",
+                                         ncurses_tarball = "ncurses-6.3.tar.gz",
+                                         tmux_tarball = "tmux-3.4.tar.gz",
+
+                                         platform_artifacts = {
+                                             "utf8proc": "utf8proc-2.9.0.tar.gz"
+                                         } )
 
 @click.command()
 @click.option("--os-type", type=click.Choice(["linux", "macos"]), required=True)
