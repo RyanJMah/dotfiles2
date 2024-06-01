@@ -98,7 +98,8 @@ MACOS_LOCAL_ARTIFACTS = TargetArtifacts( oh_my_zsh_install_sh = "install.sh",
 
 @click.command()
 @click.option("--os-type", type=click.Choice(["linux", "macos"]), required=True)
-def __generate_artifacts_tarball(os_type):
+@click.option("--out-dir", type=click.Path(), required=False, default="build")
+def __generate_artifacts_tarball(os_type, out_dir):
     import os
     from dataclasses import fields
 
@@ -135,7 +136,7 @@ def __generate_artifacts_tarball(os_type):
             download_artifact(field_obj)
 
     # Create the tarball
-    tarball_filename = os.path.join(paths.BUILD_DIR, f"artifacts_bundle-{os_type}.tar.gz")
+    tarball_filename = os.path.join(out_dir, f"artifacts_bundle-{os_type}.tar.gz")
     shell.run(f"tar -cvzf {tarball_filename} -C {bundle_dir} .")
 
     print(f"Artifacts tarball created: {tarball_filename}")
