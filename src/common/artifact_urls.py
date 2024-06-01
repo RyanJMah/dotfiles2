@@ -78,7 +78,7 @@ def __generate_artifacts_tarball(os_type):
         target_artifacts = TargetArtifacts.from_target_urls(MACOS_DOWNLOADABLE_ARTIFACTS, RemoteArtifact)
 
     # Create the artifacts bundle directory
-    bundle_dir = os.path.join(paths.BUILD_DIR, "artifacts_bundle")
+    bundle_dir = os.path.join(paths.BUILD_DIR, f"artifacts_bundle-{os_type}")
     os.makedirs(bundle_dir, exist_ok=True)
 
     def download_artifact(artifact: RemoteArtifact):
@@ -98,7 +98,7 @@ def __generate_artifacts_tarball(os_type):
             download_artifact(field_obj)
 
     # Create the tarball
-    tarball_filename = os.path.join(paths.BUILD_DIR, "artifacts_bundle.tar.gz")
+    tarball_filename = os.path.join(paths.BUILD_DIR, f"artifacts_bundle-{os_type}.tar.gz")
     shell.run(f"tar -cvzf {tarball_filename} -C {bundle_dir} .")
 
     print(f"Artifacts tarball created: {tarball_filename}")
