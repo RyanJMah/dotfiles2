@@ -137,14 +137,14 @@
             "before": ["K"],
             "commands": ["editor.action.showDefinitionPreviewHover"]
         },
-        // {
-        // "before": ["u"],
-        // "commands":["undo"]
-        // },
-        // {
-        // "before": ["<C-r>"],
-        // "commands": ["redo"]
-        // },
+        {
+            "before": ["u"],
+            "commands":["undo"]
+        },
+        {
+            "before": ["<C-r>"],
+            "commands": ["redo"]
+        },
     ],
 
     "clangd.onConfigChanged": "restart",
