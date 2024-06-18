@@ -37,7 +37,6 @@
 
     "editor.glyphMargin": true,
     // "editor.cursorSmoothCaretAnimation": "on",
-    "editor.smoothScrolling": true,
     "editor.tabCompletion": "on",
     "editor.acceptSuggestionOnEnter": "smart",
     "editor.scrollBeyondLastLine": true,
@@ -78,9 +77,12 @@
     // "vim.statusBarColors.searchinprogressmode": ["#fc9867", "#0d0d0e"],
     // "vim.statusBarColors.commandlineinprogress": ["#fc9867", "#0d0d0e"],
 
-    "vim.scroll": 15,
+    "vim.scroll": 10,
+    // "editor.smoothScrolling": true,
     
     "vim.foldfix": true,
+
+    "vim.showMarksInGutter": true,
 
     "vim.searchHighlightColor": "#a9dc76",
     "vim.searchMatchColor": "#a9dc76",
@@ -91,7 +93,7 @@
     "vim.neovimUseConfigFile": true,
     "vim.neovimPath": "/usr/local/bin/nvim",
 
-    "vim.hlsearch": true,
+   "vim.hlsearch": true,
     "vim.incsearch": true,
     "vim.ignorecase": false,
 
