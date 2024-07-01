@@ -53,6 +53,8 @@ class MacOS(Platform):
         cmd = f"""
         ln -sf {self.paths.DOTFILES_MACOS_DIR}/.yabairc {self.paths.HOME}/.yabairc
         ln -sf {self.paths.DOTFILES_MACOS_DIR}/.skhdrc {self.paths.HOME}/.skhdrc
+        
+        mkdir -p {self.paths.home}/.config/alacritty
         ln -sf {self.paths.DOTFILES_MACOS_DIR}/alacritty.yml {self.paths.HOME}/.config/alacritty/alacritty.yml
         """
         self.exec_bash(cmd)
