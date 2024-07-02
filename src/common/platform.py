@@ -288,8 +288,13 @@ class Platform(ABC):
         ln -sf {self.paths.DOTFILES_COMMON_DIR}/tmux_conf/.tmux.conf {self.paths.HOME}/.tmux.conf
         ln -sf {self.paths.DOTFILES_COMMON_DIR}/tmux_conf/.tmux_theme.sh {self.paths.HOME}/.tmux_theme.sh
         ln -sf {self.paths.DOTFILES_COMMON_DIR}/tmux_conf/.tmux_sensible.sh {self.paths.HOME}/.tmux_sensible.sh
+
+        mkdir -p {self.paths.HOME}/.tmux
         """
         self.exec_bash(cmd)
+
+        # Install plugins
+        self.shell.symlink_dir_files(f"{self.paths.DOTFILES_COMMON_DIR}/tmux_conf/plugins", f"{self.paths.HOME}/.tmux")
 
     def install_misc(self):
         cmd = f"""

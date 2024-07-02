@@ -73,3 +73,6 @@
 [submodule "dotfiles/common/oh_my_zsh_conf/plugins/zsh-syntax-highlighting"]
 	path = dotfiles/common/oh_my_zsh_conf/plugins/zsh-syntax-highlighting
 	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
+[submodule "dotfiles/common/tmux_conf/plugins/tmux-resurrect"]
+	path = dotfiles/common/tmux_conf/plugins/tmux-resurrect
+	url = https://github.com/tmux-plugins/tmux-resurrect.git
