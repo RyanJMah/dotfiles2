@@ -78,15 +78,6 @@
     // "vim.statusBarColors.commandlineinprogress": ["#fc9867", "#0d0d0e"],
 
 
-    // How many spaces do you wish the indentation was? The extension will *try* to match this.
-    "stretchySpaces.targetIndentation": 4,
-
-    // Try to align asterisks in the same column to preserve JSDoc-style comment alignment.
-    "stretchySpaces.alignAsterisks": true,
-
-    // The delay in ms until the editor gets updated.
-    "stretchySpaces.updateDelay": 50, // 10 makes it super fast but may cost more resources
-
     "vim.scroll": 10,
     // "editor.smoothScrolling": true,
     

@@ -13,4 +13,3 @@ ms-vscode.remote-explorer
 mshr-h.VerilogHDL
 pierre-payen.gdb-syntax
 vscodevim.vim
-kylepaulsen.stretchy-spaces
