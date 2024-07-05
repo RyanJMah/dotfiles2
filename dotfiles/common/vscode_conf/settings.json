@@ -30,7 +30,7 @@
 
     "editor.insertSpaces": true,
     "editor.tabSize": 4,
-    "editor.detectIndentation": false,
+    "editor.detectIndentation": true,
     "editor.stickyTabStops": true,
     "editor.guides.indentation": true,
     "editor.wordWrap": "off",
@@ -76,6 +76,16 @@
     // "vim.statusBarColors.visualblock": ["#b39df3", "#0d0d0e"],
     // "vim.statusBarColors.searchinprogressmode": ["#fc9867", "#0d0d0e"],
     // "vim.statusBarColors.commandlineinprogress": ["#fc9867", "#0d0d0e"],
+
+
+    // How many spaces do you wish the indentation was? The extension will *try* to match this.
+    "stretchySpaces.targetIndentation": 4,
+
+    // Try to align asterisks in the same column to preserve JSDoc-style comment alignment.
+    "stretchySpaces.alignAsterisks": true,
+
+    // The delay in ms until the editor gets updated.
+    "stretchySpaces.updateDelay": 50, // 10 makes it super fast but may cost more resources
 
     "vim.scroll": 10,
     // "editor.smoothScrolling": true,
@@ -123,7 +133,7 @@
         },
         {
             "before": ["g", "i"],
-            "commands": ["editor.action.revealDefinition"],
+            "commands": ["editor.action.revealDefinition"]
         },
         {
             "before": ["g", "b"],
@@ -144,7 +154,7 @@
         {
             "before": ["<C-r>"],
             "commands": ["redo"]
-        },
+        }
     ],
 
     "clangd.onConfigChanged": "restart",
@@ -161,7 +171,7 @@
         "*.m": "matlab"
     },
     "material-icon-theme.folders.associations": {
-        "inc": "include",
+        "inc": "include"
     },
 
     "workbench.colorCustomizations": {
@@ -188,5 +198,5 @@
     "codesnap.boxShadow": "rgba(0, 0, 0, 0.0) 0px 20px 68px",
     "accessibility.signals.terminalBell": {
         "sound": "off"
-    },
+    }
 }
