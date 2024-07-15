@@ -1,7 +1,7 @@
 "-----------------------------------------------------------------------------------
 " KEYMAPINGS
 
-nnoremap <silent> dm :delmarks!<CR>
+nnoremap <silent> md :delmarks!<CR>
 
 " Ctrl+S to save
 noremap  <silent> <C-S> :w<CR>

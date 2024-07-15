@@ -94,7 +94,7 @@
     "vim.neovimUseConfigFile": true,
     "vim.neovimPath": "/usr/local/bin/nvim",
 
-   "vim.hlsearch": true,
+    "vim.hlsearch": true,
     "vim.incsearch": true,
     "vim.ignorecase": false,
 
@@ -179,7 +179,7 @@
     },
     "codesnap.transparentBackground": true,
     // "C_Cpp.intelliSenseEngine": "disabled",
-    // "C_Cpp.errorSquiggles": "disabled",
+    "C_Cpp.errorSquiggles": "disabled",
 
     "latex-workshop.latex.outDir": "build",
 
@@ -189,5 +189,6 @@
     "codesnap.boxShadow": "rgba(0, 0, 0, 0.0) 0px 20px 68px",
     "accessibility.signals.terminalBell": {
         "sound": "off"
-    }
+    },
+    "gitlens.currentLine.enabled": false
 }
