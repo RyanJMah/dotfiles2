@@ -19,6 +19,7 @@
         "key": "ctrl+p",
         "command": "workbench.action.quickOpen"
     },
+
     {
         "key": "ctrl+`",
         "command": "workbench.action.terminal.focus"
@@ -28,10 +29,24 @@
         "when": "terminalFocus",
         "command": "workbench.action.focusActiveEditorGroup"
     },
+
+
+    {
+        "key": "cmd+`",
+        "command": "workbench.action.terminal.focus"
+    },
+    {
+        "key": "cmd+`",
+        "when": "terminalFocus",
+        "command": "workbench.action.focusActiveEditorGroup"
+    },
+
+
     {
         "key": "alt+t",
         "command": "workbench.action.togglePanel"
     },
+
     {
         "key": "cmd+j",
         "command": ""
