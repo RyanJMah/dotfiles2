@@ -53,11 +53,15 @@ font:
 
   normal:
     family: ComicCode Nerd Font
-    style: Medium
+    style: Regular
 
   italic:
     family: ComicCode Nerd Font
-    style: Medium Italic
+    style: Italic
+
+  bold:
+    family: ComicCode Nerd Font
+    style: SemiBold
 
 cursor:
   style:
