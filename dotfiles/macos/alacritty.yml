@@ -52,15 +52,15 @@ font:
     y: 0
 
   normal:
-    family: ComicCode Nerd Font
-    style: Regular
+    family: ComicCode Nerd Font Mono
+    style: Medium
 
   italic:
-    family: ComicCode Nerd Font
+    family: ComicCode Nerd Font Mono
     style: Italic
 
   bold:
-    family: ComicCode Nerd Font
+    family: ComicCode Nerd Font Mono
     style: SemiBold
 
 cursor:
